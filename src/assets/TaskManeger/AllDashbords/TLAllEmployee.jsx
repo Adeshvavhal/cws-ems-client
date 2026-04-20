@@ -13,15 +13,24 @@ function TLAllEmployee({ teamLeadId: propTeamLeadId, onClose, onViewTasks }) {
   
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(5);
+const [itemsPerPage, setItemsPerPage] = useState(5);
 
   // Safe guard for pagination data
-  const tasks = Array.isArray(filteredMembers) ? filteredMembers : [];
+const data = filteredMembers;
 
-  const totalPages = Math.ceil(tasks.length / itemsPerPage);
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentMembers = tasks.slice(indexOfFirstItem, indexOfLastItem);
+const totalItems = data.length;
+const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+const startIndex = (currentPage - 1) * itemsPerPage;
+const endIndex = startIndex + itemsPerPage;
+
+const currentMembers = data.slice(startIndex, endIndex);
+
+useEffect(() => {
+  if (currentPage > totalPages) {
+    setCurrentPage(1);
+  }
+}, [itemsPerPage, filteredMembers.length]);
 
   const modalRef = useRef(null);
   useEffect(() => {
@@ -325,11 +334,11 @@ function TLAllEmployee({ teamLeadId: propTeamLeadId, onClose, onViewTasks }) {
               </select>
             </div>
 
-            <span style={{ fontSize: "14px", marginLeft: "16px", color: "#212529" }}>
-              {filteredMembers.length === 0
-                ? "0–0 of 0"
-                : `${indexOfFirstItem + 1}-${indexOfLastItem} of ${filteredMembers.length}`}
-            </span>
+          <span style={{ fontSize: "14px", marginLeft: "16px", color: "#212529" }}>
+  {filteredMembers.length === 0
+    ? "0–0 of 0"
+    : `${startIndex + 1}-${Math.min(endIndex, totalItems)} of ${totalItems}`}
+</span>
 
             <div className="d-flex align-items-center" style={{ marginLeft: "16px" }}>
               <button
@@ -343,7 +352,7 @@ function TLAllEmployee({ teamLeadId: propTeamLeadId, onClose, onViewTasks }) {
               <button
                 className="btn btn-sm border-0"
                 onClick={() => handlePageChange(currentPage + 1)}
-                disabled={currentPage === totalPages}
+              disabled={currentPage >= totalPages}
                 style={{ fontSize: "18px", padding: "2px 8px", color: "#212529" }}
               >
                 ›

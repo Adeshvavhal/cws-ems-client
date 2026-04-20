@@ -1716,7 +1716,7 @@ const EmployeeCareer = ({ user }) => {
                 </div>
                 <div className="modal-body">
                   {/* Modal Tabs */}
-                  <div className="d-flex flex-row justify-content-start justify-content-md-center gap-2 mb-3 flex-wrap" style={{marginLeft:50}}>
+                 <div className="d-flex justify-content-center gap-2 mb-3 flex-wrap">
                     <button
                       className={`btn btn-sm custom-outline-btn ${
                         activeViewTab === "DESC"
@@ -1727,7 +1727,7 @@ const EmployeeCareer = ({ user }) => {
                     >
                       Job Description
                     </button>
-                <button
+          <button
   type="button"
   className={`btn btn-sm custom-outline-btn ${
     activeViewTab === "APPLY"
@@ -1737,7 +1737,7 @@ const EmployeeCareer = ({ user }) => {
   disabled={isExpired(selectedJob?.dueOn)}
   onClick={() => setActiveViewTab("APPLY")}
 >
-  Application Form
+  {isExpired(selectedJob?.dueOn) ? "Application Closed" : "Application Form"}
 </button>
                   </div>
                  {activeViewTab === "DESC" && (
@@ -1995,7 +1995,7 @@ const EmployeeCareer = ({ user }) => {
                 </div>
                 <div className="modal-body">
                   {/* Modal Tabs */}
-                  <div className="d-flex gap-3 mb-3">
+                 <div className="d-flex justify-content-center gap-2 mb-3 flex-wrap">
                     <button
                       className={`btn btn-sm custom-outline-btn ${
                         activeReferralTab === "DESC"
@@ -2006,16 +2006,17 @@ const EmployeeCareer = ({ user }) => {
                     >
                       Job Description
                     </button>
-                    <button
-                      className={`btn btn-sm custom-outline-btn ${
-                        activeReferralTab === "APPLY"
-                          ? "btn-primary"
-                          : "btn-outline-primary"
-                      }`}
-                      onClick={() => setActiveReferralTab("APPLY")}
-                    >
-                      Application Form
-                    </button>
+                            <button
+  className={`btn btn-sm custom-outline-btn ${
+    activeReferralTab === "APPLY"
+      ? "btn-primary"
+      : "btn-outline-primary"
+  }`}
+  disabled={isExpired(selectedJob?.dueOn)}
+  onClick={() => setActiveReferralTab("APPLY")}
+>
+  {isExpired(selectedJob?.dueOn) ? "Application Closed" : "Application Form"}
+</button>
                   </div>
                                  {/* {activeViewTab === "DESC" && ( */}
                                  {activeReferralTab === "DESC" && (

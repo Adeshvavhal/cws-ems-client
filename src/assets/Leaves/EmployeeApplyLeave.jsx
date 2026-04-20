@@ -359,21 +359,20 @@ function EmployeeApplyLeave({ user, onLeaveApplied }) {
     return "No approver assigned";
   };
 
-  useEffect(() => {
-    if (showModal) {
-      document.body.style.overflow = "hidden";
-      document.documentElement.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-      document.documentElement.style.overflow = "";
-    }
-    useEffect;
+useEffect(() => {
+  if (showModal) {
+    document.body.style.overflow = "hidden";
+    document.documentElement.style.overflow = "hidden";
+  } else {
+    document.body.style.overflow = "";
+    document.documentElement.style.overflow = "";
+  }
 
-    return () => {
-      document.body.style.overflow = "";
-      document.documentElement.style.overflow = "";
-    };
-  }, [showModal]);
+  return () => {
+    document.body.style.overflow = "";
+    document.documentElement.style.overflow = "";
+  };
+}, [showModal]);
   return (
     <>
       <button
@@ -430,13 +429,26 @@ function EmployeeApplyLeave({ user, onLeaveApplied }) {
           tabIndex="-1"
           autoFocus
           onKeyDown={trapFocus}
-          className="modal d-block"
-          style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
+              className="modal fade show d-block"
+style={{
+  display: "flex",
+ alignItems: "flex-start",
+  justifyContent: "center",
+  background: "rgba(0,0,0,0.5)",
+  position: "fixed",
+  inset: 0,
+  zIndex: 1050,
+  overflow: "hidden",
+  paddingTop: "100px"   // ✅ IMPORTANT
+}}
         >
-          <div
-            className="modal-dialog modal-dialog-centered" 
-            style={{ maxWidth: "600px", width: "95%"}}
-          >
+   <div
+  className="modal-dialog modal-lg"
+  style={{
+    maxWidth: "650px",
+    width: "95%",
+  }}
+>
             <div className="modal-content">
               <div
                 className="modal-header text-white"
@@ -731,16 +743,15 @@ function EmployeeApplyLeave({ user, onLeaveApplied }) {
                       //     } (${manager.name})`
                       //     : "No manager assigned"
                       // }
-                      style={{
-                        fontSize: "14px",
-                        padding: "8px 12px",
-                        border: "1px solid #ced4da",
-                        borderRadius: "4px",
-                        maxWidth: "250px",
-                        backgroundColor: "#f8f9fa",
-                        textTransform: "capitalize",
-                        flex: 1 /* Keep flex: 1 */,
-                      }}
+                     style={{
+  fontSize: "14px",
+  padding: "8px 12px",
+  border: "1px solid #ced4da",
+  borderRadius: "4px",
+  backgroundColor: "#f8f9fa",
+  textTransform: "capitalize",
+  width: "100%",   // ✅ full width
+}}
                     />
                   </div>
 

@@ -95,17 +95,26 @@ const VisualDiary = () => {
     <div className="gallery-wrapper">
       {/* FILTER */}
       <div className="top-filter-bar">
-        {FILE_TYPES.map((type) => (
-          <button
-            key={type}
-            // className={activeType === type ? "filter active" : "filter" }
-            className="btn btn-sm custom-outline-btn"
-            style={{ minWidth: 90 }}
-            onClick={() => setActiveType(type)}
-          >
-            {type.toUpperCase()}
-          </button>
-        ))}
+   {FILE_TYPES.map((type) => {
+  const isActive = activeType === type;
+
+  return (
+    <button
+      key={type}
+      className="btn btn-sm"
+      style={{
+        minWidth: 90,
+        backgroundColor: isActive ? "#3A5FBE" : "transparent",
+        color: isActive ? "#fff" : "#3A5FBE",
+        border: "1px solid #3A5FBE",
+      }}
+      onClick={() => setActiveType(type)}
+    >
+      {type.toUpperCase()}
+    </button>
+  );
+})}
+        
       </div>
 
       {loading && <p className="loading-text">Loading gallery...</p>}
@@ -117,7 +126,7 @@ const VisualDiary = () => {
 
           return (
             <div key={category} className="section-wrapper">
-              <h3 className="category-title " style={{ fontWeight: "500" }}>
+              <h3 className="category-title " style={{ fontWeight: "500",marginLeft:"12px" }}>
                 {category}
               </h3>
 
@@ -139,7 +148,7 @@ const VisualDiary = () => {
                     >
                       <div className="card-body">
                         {/* TOP TITLE */}
-                        <h6 className="card-title fw-semibold">{item.title}</h6>
+                        <h6 className="card-title fw-semibold">{item.title} </h6>
 
                         <hr className="card-divider" />
 
@@ -257,7 +266,7 @@ const VisualDiary = () => {
             className="custom-modal-dialog"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="custom-modal-content">
+            <div className="custom-modal-content"style={{marginTop:100}}>
               {/* HEADER */}
               <div
                 className="custom-modal-header"

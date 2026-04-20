@@ -417,7 +417,7 @@ const applyFilter = () => {
 
 
   //Added by tanvi
-  const isAnyPopupOpen = !!viewTicket || showRaiseModal;
+  const isAnyPopupOpen = !!viewTicket || showRaiseModal ||editData;
   useEffect(() => {
     if (isAnyPopupOpen) {
       document.body.style.overflow = "hidden";
@@ -460,7 +460,7 @@ const applyFilter = () => {
             className="row g-2 align-items-center"
             style={{ justifyContent: "space-between" }}
           >
-            <div className="col-12 col-md-auto d-flex align-items-center gap-2 mb-1">
+            <div className="col-12 col-md-auto d-flex align-items-center gap-1 mb-1 ">
               <label
                 htmlFor="statusFilter"
                 className="fw-bold mb-0"
@@ -482,7 +482,7 @@ const applyFilter = () => {
               </select>
             </div>
 
-            <div className="col-12 col-md-auto d-flex align-items-center gap-2 mb-1 ms-2">
+            <div className="col-12 col-md-auto d-flex align-items-center gap-2 mb-1 ms-">
               <label
                 htmlFor="fromDate"
                 className="fw-bold mb-0"
@@ -500,7 +500,7 @@ const applyFilter = () => {
               />
             </div>
 
-            <div className="col-12 col-md-auto d-flex align-items-center mb-1">
+            <div className="col-12 col-md-auto d-flex align-items-center mb-1 gap-4">
               <label
                 htmlFor="toDate"
                 className="fw-bold mb-0"
@@ -571,8 +571,8 @@ const applyFilter = () => {
           }}
         >
           <div
-            className="modal-dialog modal-dialog-scrollable"
-            style={{ maxWidth: "650px", width: "95%" }}
+            className="modal-dialog modal-dialog"
+            style={{ maxWidth: "650px", width: "95%" ,marginTop:"100px"}}
           >
             <div className="modal-content">
               <div
@@ -1077,8 +1077,8 @@ const applyFilter = () => {
           }}
         >
           <div
-            className="modal-dialog modal-dialog-scrollable"
-            style={{ maxWidth: "650px", width: "95%" }}
+            className="modal-dialog modal-dialog"
+            style={{ maxWidth: "650px", width: "95%" ,marginTop:"100px"}}
           >
             <div className="modal-content">
               <div
@@ -1335,7 +1335,7 @@ const applyFilter = () => {
         >
           <div
             className="modal-dialog modal-dialog-scrollable"
-            style={{ maxWidth: "650px", width: "95%" }}
+            style={{ maxWidth: "600px", width: "95%" }}
           >
             <div className="modal-content">
               <div
@@ -1410,23 +1410,36 @@ const applyFilter = () => {
                   />
                 </div>
 
-                <div className="mb-3">
-                  <label className="form-label fw-semibold">Description</label>
-                  <textarea
-                    className="form-control"
-                    rows="3"
-                    value={editData.description}
-                    onChange={(e) => {
-                      const words = e.target.value.trim().split(/\s+/);
-                      if (words.length <= 200) {
-                        setEditData({
-                          ...editData,
-                          description: e.target.value,
-                        });
-                      }
-                    }}
-                  />
-                </div>
+                    <div className="mb-3">
+  <label className="form-label fw-semibold">
+    Description (Max 200 words)
+  </label>
+
+  <textarea
+    className="form-control"
+    rows="3"
+    value={editData.description}
+    onChange={(e) => {
+      const value = e.target.value;
+      const words = value.trim().split(/\s+/).filter(Boolean);
+
+      if (words.length <= 200) {
+        setEditData({
+          ...editData,
+          description: value,
+        });
+      }
+    }}
+    placeholder="Enter description"
+  />
+
+  <small style={{ color: "#6c757d" }}>
+    {editData.description.trim()
+      ? editData.description.trim().split(/\s+/).filter(Boolean).length
+      : 0}{" "}
+    / 200 words
+  </small>
+</div>
 
                 <div className="mb-3">
                   <label className="form-label fw-semibold">Status</label>
@@ -1442,15 +1455,27 @@ const applyFilter = () => {
                   </select>
                 </div>
 
-                <div className="mb-3">
+                 <div className="mb-3">
                   <label className="form-label fw-semibold">Add Comment</label>
-                  <textarea
-                    className="form-control"
-                    rows="3"
-                    placeholder="Add your comment here..."
-                    value={comment}
-                    onChange={(e) => setComment(e.target.value)}
-                  />
+                               <textarea
+  className="form-control"
+  rows="3"
+  placeholder="Add your comment here..."
+  value={comment}
+  onChange={(e) => {
+    const words = e.target.value.trim().split(/\s+/).filter(Boolean);
+    if (words.length <= 100) {
+      setComment(e.target.value);
+    }
+  }}
+/>
+
+<small className="text-muted">
+  {(comment || "").trim()
+    ? (comment || "").trim().split(/\s+/).filter(Boolean).length
+    : 0}
+  /100 words
+</small>
                 </div>
 
                 {/*  Comments  */}
@@ -1464,26 +1489,28 @@ const applyFilter = () => {
                     </div>
 
                     <div className="col-7 col-sm-9">
-                      <div style={{ maxHeight: "150px", overflowY: "auto" }}>
-                        {[...(editData.comments || [])]
-                          .reverse()
-                          .map((comment, index) => (
-                            <div
-                              key={index}
-                              className="mb-2 p-2 bg-light rounded"
-                            >
-                              {comment.timestamp && (
-                                <small className="text-muted d-block">
-                                  {new Date(comment.timestamp).toLocaleString()}
-                                </small>
-                              )}
-                              <div>
-                                <b>{comment.role || "User"}:</b>{" "}
-                                {comment.message}
-                              </div>
-                            </div>
-                          ))}
-                      </div>
+                       <div style={{ maxHeight: "150px", overflowY: "auto" }}>
+        {[...(editData.comments || [])]
+          .reverse()
+          .map((comment, index) => (
+            <div
+              key={index}
+              className="mb-2 p-2 bg-light rounded"
+            >
+              {comment.timestamp && (
+                <small className="text-muted d-block">
+                  {new Date(comment.timestamp).toLocaleString()}
+                </small>
+              )}
+              <div>
+                <b>{comment.role || "User"}:</b>{" "}
+                {comment.message?.length > 100
+                  ? comment.message.substring(0, 100) + "..."
+                  : comment.message}
+              </div>
+            </div>
+          ))}
+      </div>
                     </div>
                   </div>
                 )}
@@ -1491,7 +1518,8 @@ const applyFilter = () => {
 
               <div className="modal-footer border-0">
                 <button
-                  className="btn custom-outline-btn"
+                     className="btn btn-sm custom-outline-btn"
+                   style={{ minWidth: 90 }}
                   onClick={saveChanges}
                 >
                   Save Changes

@@ -255,7 +255,7 @@ function EmployeeTeams({ user }) {
                 className="fw-bold mb-0"
                 style={{ fontSize: "16px", color: "#3A5FBE" }}
               >
-                Search
+                Search.
               </label>
               <input
                 type="text"

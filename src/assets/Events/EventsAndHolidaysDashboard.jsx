@@ -289,7 +289,17 @@ useEffect(() => {
       return updated.sort((a, b) => new Date(a.date) - new Date(b.date));
     });
   };
+const validAnnouncements = announcementsList.filter((announcement) => {
+  if (!announcement.expirationDate) return false;
 
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const expiryDate = new Date(announcement.expirationDate);
+  expiryDate.setHours(0, 0, 0, 0);
+
+  return expiryDate >= today;
+});
   return (
     <div className="container events-holidays-container">
       <div className="row" style={{ marginTop: "-40px" }}>
@@ -607,13 +617,13 @@ useEffect(() => {
             <h5 className="section-title">Announcements</h5>
             {isAdmin && <AddAnnouncements onAdd={handleAddAnnouncement} />}
           </div>
-          {announcementsList.length === 0 ? (
+          {validAnnouncements.length === 0 ? (
             <div className="alert alert-info no-data-alert">
               No upcoming announcements
             </div>
           ) : (
             <div className="scrollable-list">
-              {announcementsList
+              {validAnnouncements
                 .filter((announcement) => {
                   if (!announcement.expirationDate) return false;
                   const today = new Date();

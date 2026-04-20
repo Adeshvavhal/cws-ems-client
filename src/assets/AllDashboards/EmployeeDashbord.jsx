@@ -1633,12 +1633,12 @@ const handleStartBreak = async () => {
               <MyAttendanceCalender employeeId={user._id} />
             </div>
           </div>
-          <div className="row g-2 mt-3">
+          <div className="row g-3 mt-1">
         
       
 
       {/*  Poll */}
-      <div className="col-md-4">
+       <div className="col-md-4 mb-2">
         <ActivePolls user={user} />
       </div>
 

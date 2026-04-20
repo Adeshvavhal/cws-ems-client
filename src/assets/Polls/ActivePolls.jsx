@@ -390,8 +390,8 @@ const ActivePolls = ({ user }) => {
 
   return (
     <div
-      className="card shadow-sm h-100 border-0"
-      style={{ borderRadius: "10px" }}
+  className="card shadow-sm border-0"
+      style={{ borderRadius: "10px", width: "100%",maxWidth:"465px" }}
     >
       <div
         className="card-header d-flex justify-content-between align-items-center"
@@ -665,15 +665,28 @@ const ActivePolls = ({ user }) => {
           className="modal fade show"
           ref={modalRef}
           tabIndex="-1"
-          style={{ display: "block", background: "rgba(0,0,0,0.5)" }}
+     style={{
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "flex-start",  
+  position: "fixed",
+  inset: 0,
+  zIndex: 1055,               
+  background: "rgba(0,0,0,0.5)",
+  paddingTop: "100px",         
+  overflow: "hidden",
+}}
           onClick={(e) => {
             if (e.target === e.currentTarget) {
               setPopupPreviousPolls(null);
             }
           }}
         >
-          <div className="modal-dialog modal-lg modal-dialog-centered"
-            style={{ width: "600px" }}
+          <div className="modal-dialog modal-lg"
+style={{
+  width: "95%",
+  maxWidth: "600px",
+}}
           >
             <div className="modal-content">
               {/* HEADER */}

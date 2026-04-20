@@ -76,7 +76,7 @@ import TLAllEmployee from "../../assets/TaskManeger/AllDashbords/TLAllEmployee";
 import TLTeamMemberAttendance from "../OnlyForAdmin/TLTeamMemberAttendance" //rutuja
 import TLDashboard from "./TLDashboard"
 import TeamLeaderPerformances from "../Performances/TeamLeaderPerformances";
-import HROffers from "./HRoffers";
+
 
 function Dashboard() {
   const { role, username, id } = useParams();
@@ -803,16 +803,7 @@ const fetchNotifications = async () => {
                   )
                 }
               />
-              <Route
-  path="Hr-Offers"
-  element={
-    role === "hr" ? (
-      <HROffers user={user} />
-    ) : (
-      <h5>Access Denied</h5>
-    )
-  }
-/>
+   
               <Route
                 path="Employee-Resignation"
                 element={

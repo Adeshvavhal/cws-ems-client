@@ -917,9 +917,7 @@ function EmployeeProfileForAdmin({ employee: stateEmployee }) {
                       name="doj"
                       value={formData.doj ? formData.doj.split("T")[0] : ""}
                       onChange={handleChange}
-                      // className="form-control bg-light border-0"
-                      className="form-control border-0 bg-secondary-subtle text-muted"
-                      readOnly
+                      className="form-control bg-light border-0"
                     />
                     {errors.doj && (
                       <div className="text-danger small mt-1">{errors.doj}</div>

@@ -1008,6 +1008,7 @@ function EmployeeResignation({ user }) {
                     <button
                       type="button"
                       className="btn btn-sm custom-outline-btn"
+                      style={{minWidth:90}}
                       onClick={() => {
                         resetApplyForm();
                         setShowApply(false);
@@ -1018,6 +1019,7 @@ function EmployeeResignation({ user }) {
                     <button
                       type="submit"
                       className="btn btn-sm custom-outline-btn"
+                         style={{minWidth:90}}
                     >
                       Submit
                     </button>

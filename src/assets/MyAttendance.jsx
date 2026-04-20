@@ -870,9 +870,9 @@ function MyAttendance({ employeeId }) {
       style={{ marginTop: "-25px", backgroundColor: "#f5f7fb" }}
     >
       <div className="row g-3">
-        <div className="col-md-8 mb-3 ">
+        <div className="col-md-8 ">
           {/* Calender card start */}
-          <div className="card p-3 mt-3 shadow-sm p-4 border-10 d-flex justify-content-center">
+          <div className="card p-4 shadow-sm border-0">
             <h2
               className="text-center"
               style={{ color: "#3A5FBE", fontSize: "20px" }}
@@ -902,7 +902,7 @@ function MyAttendance({ employeeId }) {
                     <div className="badge bg-danger p-2">Holidays: {summary.holidays}</div>
                 </div> */}
             <div
-              className="d-flex justify-content-center mt-1 flex-wrap"
+              className="d-flex justify-content-center  flex-wrap"
               style={{ gap: "35px" }}
             >
               <span>
@@ -926,8 +926,8 @@ function MyAttendance({ employeeId }) {
         </div>
 
         {/* Today Attendance Section Start */}
-        <div className="col-md-4">
-          <div className="card p-4 mt-3 shadow-sm  border-10 mb-3">
+        <div className="col-md-4 ">
+         <div className="card p-4 shadow-sm border-0">
             <h2
               style={{
                 fontSize: "20px",
@@ -1399,7 +1399,15 @@ function MyAttendance({ employeeId }) {
           {/* Apply Regularization btn End */}
         </div>
       </div>
-
+  <div className="text-end mt-3">
+        <button
+          style={{ minWidth: 90 }}
+          className="btn btn-sm custom-outline-btn"
+          onClick={() => window.history.go(-1)}
+        >
+          Back
+        </button>
+      </div>
       {showModal && (
         <div
           className="modal fade show d-block"

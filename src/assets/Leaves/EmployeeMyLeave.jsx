@@ -266,6 +266,15 @@ function EmployeeMyLeave({ user, refreshKey,fetchNotifications}) {
       setDeletingId(null);
     }
   };
+  const calculateDays = (from, to) => {
+  const start = new Date(from);
+  const end = new Date(to);
+
+  const diffTime = end - start;
+  const diffDays = diffTime / (1000 * 60 * 60 * 24) + 1;
+
+  return diffDays > 0 ? diffDays : 0;
+};
   
   return (
     <>
@@ -373,14 +382,14 @@ function EmployeeMyLeave({ user, refreshKey,fetchNotifications}) {
               >
                 To
               </label>
-              <input
-                id="dateToFilter"
-                type="date"
-                className="form-control"
-                value={dateToFilter}
-                onChange={(e) => setDateToFilter(e.target.value)}
-                style={{ minWidth: "140px" }}
-              />
+             <input
+  id="dateToFilter"
+  type="date"
+  className="form-control"
+  value={dateToFilter}
+  min={dateFromFilter}   // ✅ IMPORTANT
+  onChange={(e) => setDateToFilter(e.target.value)}
+/>
             </div>
 
             <div className="col-auto ms-auto d-flex gap-2">
@@ -511,7 +520,7 @@ function EmployeeMyLeave({ user, refreshKey,fetchNotifications}) {
                   whiteSpace: "nowrap",
                 }}
               >
-                Approved By
+              Actioned By
               </th>
               <th
                 style={{
@@ -531,7 +540,7 @@ function EmployeeMyLeave({ user, refreshKey,fetchNotifications}) {
             {currentLeaves.length === 0 ? (
               <tr>
                 <td
-                  colSpan="6"
+                  colSpan="9"
                   className="text-center py-4"
                   style={{ color: "#6c757d" }}
                 >
@@ -610,7 +619,7 @@ function EmployeeMyLeave({ user, refreshKey,fetchNotifications}) {
                       whiteSpace: "nowrap",
                     }}
                   >
-                    {l.totalDays}
+                   {calculateDays(l.dateFrom, l.dateTo)}
                   </td>
                   <td
                     style={{
@@ -797,14 +806,18 @@ function EmployeeMyLeave({ user, refreshKey,fetchNotifications}) {
                   <div className="row mb-2">
                     <div className="col-5 col-sm-3 fw-semibold">Duration</div>
                     <div className="col-sm-9 col-7">
-                      {selectedLeave.totalDays}
+                     {calculateDays(selectedLeave.dateFrom, selectedLeave.dateTo)}
                     </div>
                   </div>
 
                   <div className="row mb-2">
                     <div className="col-5 col-sm-3 fw-semibold">
-                      Approved By
-                    </div>
+  {selectedLeave.status === "approved"
+    ? "Approved By"
+    : selectedLeave.status === "rejected"
+    ? "Rejected By"
+    : "Reviewed By"}
+</div>
                     <div
                       className="col-sm-9 col-7"
                       style={{

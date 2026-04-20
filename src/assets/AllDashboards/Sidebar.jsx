@@ -542,15 +542,8 @@ function Sidebar({ handleLogout }) {
             <h6 className="mt-1">Settings</h6>
           </NavLink>
         </li>
-        <li className="nav-item">
-  <NavLink
-    to={`/dashboard/${role}/${username}/${id}/Hr-Offers`}
-    className="nav-link"
-  >
-    <i className="bi bi-gift me-2"></i>
-    HR Offers
-  </NavLink>
-</li>
+      
+  
       </div>
     </>
   );
