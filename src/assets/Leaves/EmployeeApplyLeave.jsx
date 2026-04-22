@@ -423,7 +423,7 @@ useEffect(() => {
         }
       `}</style>
 
-      {showModal && (
+{showModal && (
         <div
           ref={popupRef}
           tabIndex="-1"
@@ -439,7 +439,7 @@ style={{
   inset: 0,
   zIndex: 1050,
   overflow: "hidden",
-  paddingTop: "100px"   // ✅ IMPORTANT
+  paddingTop: "100px"   
 }}
         >
    <div
@@ -490,8 +490,8 @@ style={{
                       Leave type:
                     </label>
                     {/* NEW: Fixed width for all labels */}
-                    <div className="d-flex gap-4">
-                      <div className="form-check">
+             <div className="d-flex flex-wrap gap-3 w-100">
+                     <div className="form-check d-flex align-items-center" style={{ minWidth: "140px" }}>
                         <input
                           className="form-check-input"
                           type="radio"
@@ -524,7 +524,7 @@ style={{
                           Casual
                         </label>
                       </div>
-                      <div className="form-check">
+                    <div className="form-check d-flex align-items-center" style={{ minWidth: "140px" }}>
                         <input
                           className="form-check-input"
                           type="radio"
@@ -557,31 +557,35 @@ style={{
                           Sick
                         </label>
                       </div>
-                      <div className="form-check">
-                        {availableLeaveTypes.includes("LWP") && (
-                          <div className="form-check">
-                            <input
-                              className="form-check-input"
-                              type="radio"
-                              name="leaveType"
-                              value="LWP"
-                              checked={form.leaveType === "LWP"}
-                              onChange={handleChange}
-                              style={{
-                                width: "20px",
-                                height: "20px",
-                                accentColor: "#2E4A8B",
-                              }}
-                            />
-                            <label
-                              className="form-check-label"
-                              style={{ fontSize: "14px", marginLeft: "8px" }}
-                            >
-                              Leave Without Pay
-                            </label>
-                          </div>
-                        )}
-                      </div>
+                      
+            {availableLeaveTypes.includes("LWP") && (
+  <div className="form-check d-flex align-items-center" style={{ minWidth: "180px" }}>
+    <input
+      className="form-check-input"
+      type="radio"
+      name="leaveType"
+      value="LWP"
+      checked={form.leaveType === "LWP"}
+      onChange={handleChange}
+      style={{
+        width: "20px",
+        height: "20px",
+        accentColor: "#2E4A8B",
+      }}
+    />
+    <label
+      className="form-check-label ms-2"
+      style={{
+        fontSize: "14px",
+        color: "#495057",
+      }}
+    >
+      Leave Without Pay
+    </label>
+  </div>
+)}
+                        
+                      
                     </div>
                   </div>
                   {/* Half Day */}
@@ -750,38 +754,56 @@ style={{
   borderRadius: "4px",
   backgroundColor: "#f8f9fa",
   textTransform: "capitalize",
-  width: "100%",   // ✅ full width
+  width: "100%", 
 }}
                     />
                   </div>
 
                   {/* Reason */}
-                  <div className="mb-3  d-flex align-items-center">
-                    <label
-                      style={{
-                        fontWeight: "500",
-                        fontSize: "14px",
-                        color: "#495057",
-                        width: "90px",
-                        flexShrink: 0,
-                      }}
-                    >
-                      Reason:
-                    </label>
-                    <textarea
-                      name="reason"
-                      value={form.reason}
-                      onChange={handleChange}
-                      className="form-control"
-                      style={{
-                        flex: 1,
-                        minHeight: "80px" /* ADDED: Set minimum height */,
-                        resize:
-                          "vertical" /* ADDED: Allow vertical resize only */,
-                      }}
-                      required
-                    />
-                  </div>
+                <div className="mb-3 d-flex align-items-center">
+  <label
+    style={{
+      fontWeight: "500",
+      fontSize: "14px",
+      color: "#495057",
+      width: "90px",
+      flexShrink: 0,
+    }}
+  >
+    Reason:
+  </label>
+
+  <div style={{ flex: 1 }}>
+    <textarea
+      name="reason"
+      value={form.reason}
+      onChange={(e) => {
+        if (e.target.value.length <= 200) {
+          handleChange(e);
+        }
+      }}
+      maxLength={200}
+      className="form-control"
+      style={{
+        minHeight: "80px",
+        resize: "vertical",
+      }}
+      required
+    />
+
+    {/* ✅ Character Count */}
+    <div
+      style={{
+        fontSize: "12px",
+        color: "#6c757d",
+        textAlign: "right",
+        marginTop: "4px",
+      }}
+    >
+      {form.reason.length}/200
+    </div>
+  </div>
+</div>
 
                   {/* Buttons */}
                   <div className="d-flex justify-content-end gap-2">

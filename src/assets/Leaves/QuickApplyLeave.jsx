@@ -460,17 +460,31 @@ function QuickApplyLeave({ user }) {
       </div>
 
       {/* Modal */}
-      {showModal && (
+ {showModal && (
         <div
-          className="modal d-block"
+         
           ref={modalRef}
           tabIndex="-1"
-          style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
+                  className="modal fade show d-block"
+                  style={{
+                    display: "flex",
+                  alignItems: "flex-start",
+                    justifyContent: "center",
+                    background: "rgba(0,0,0,0.5)",
+                    position: "fixed",
+                    inset: 0,
+                    zIndex: 1050,
+                    overflow: "hidden",
+                    paddingTop: "100px"   // ✅ IMPORTANT
+                  }}
         >
-          <div
-            className="modal-dialog"
-            style={{ maxWidth: "600px", marginTop: "50px" }}
-          >
+              <div
+                className="modal-dialog modal-lg"
+                style={{
+                  maxWidth: "650px",
+                  width: "95%",
+                }}
+              >
             <div className="modal-content">
               <div
                 className="modal-header text-white"
@@ -501,9 +515,9 @@ function QuickApplyLeave({ user }) {
                       Leave type:
                     </label>
 
-                    <div className="d-flex gap-4 mt-2">
+                   <div className="d-flex flex-wrap gap-3 w-100">
                       {/* Casual Leave */}
-                      <div className="form-check">
+                       <div className="form-check d-flex align-items-center" style={{ minWidth: "140px" }}>
                         <input
                           className="form-check-input"
                           type="radio"
@@ -538,7 +552,7 @@ function QuickApplyLeave({ user }) {
                       </div>
 
                       {/* Sick Leave */}
-                      <div className="form-check">
+                       <div className="form-check d-flex align-items-center" style={{ minWidth: "140px" }}>
                         <input
                           className="form-check-input"
                           type="radio"
@@ -573,37 +587,32 @@ function QuickApplyLeave({ user }) {
                       </div>
 
                       {/* Leave Without Pay */}
-                      {availableLeaveTypes.includes("LWP") && (
-                        <div className="form-check">
-                          <input
-                            className="form-check-input"
-                            type="radio"
-                            name="leaveType"
-                            id="lwp-radio"
-                            value="LWP"
-                            checked={form.leaveType === "LWP"}
-                            onChange={handleChange}
-                            style={{
-                              width: "20px",
-                              height: "20px",
-                              cursor: "pointer",
-                              accentColor: "#2E4A8B",
-                            }}
-                          />
-                          <label
-                            className="form-check-label"
-                            htmlFor="lwp-radio"
-                            style={{
-                              fontSize: "14px",
-                              color: "#495057",
-                              marginLeft: "8px",
-                              cursor: "pointer",
-                            }}
-                          >
-                            Leave Without Pay
-                          </label>
-                        </div>
-                      )}
+                        {availableLeaveTypes.includes("LWP") && (
+                      <div className="form-check d-flex align-items-center" style={{ minWidth: "180px" }}>
+                        <input
+                          className="form-check-input"
+                          type="radio"
+                          name="leaveType"
+                          value="LWP"
+                          checked={form.leaveType === "LWP"}
+                          onChange={handleChange}
+                          style={{
+                            width: "20px",
+                            height: "20px",
+                            accentColor: "#2E4A8B",
+                          }}
+                        />
+                        <label
+                          className="form-check-label ms-2"
+                          style={{
+                            fontSize: "14px",
+                            color: "#495057",
+                          }}
+                        >
+                          Leave Without Pay
+                        </label>
+                      </div>
+                    )}
                     </div>
                   </div>
 
@@ -770,15 +779,15 @@ function QuickApplyLeave({ user }) {
                             } (${manager.name})`
                           : "No manager assigned"
                       }
-                      style={{
-                        fontSize: "14px",
-                        padding: "8px 12px",
-                        border: "1px solid #ced4da",
-                        borderRadius: "4px",
-                        maxWidth: "250px",
-                        backgroundColor: "#f8f9fa",
-                        textTransform: "capitalize",
-                      }}
+                                       style={{
+                            fontSize: "14px",
+                            padding: "8px 12px",
+                            border: "1px solid #ced4da",
+                            borderRadius: "4px",
+                            backgroundColor: "#f8f9fa",
+                            textTransform: "capitalize",
+                            width: "100%",   // ✅ full width
+                          }}
                     />
                   </div>
 
@@ -834,25 +843,16 @@ function QuickApplyLeave({ user }) {
                       // style={{ backgroundColor: "transparent", color: "#3A5FBE", border: "1px solid #3A5FBE", padding: "10px 28px", fontSize: "14px", fontWeight: "500", borderRadius: "4px" }}
 
                       className="btn btn-sm custom-outline-btn"
-                      style={{
-                        padding: "10px 32px",
-                        fontSize: "14px",
-                        fontWeight: "500",
-                        borderRadius: "4px",
-                      }}
+                    style={{ minWidth: 90 }}
                       onClick={() => setShowModal(false)}
                     >
                       Cancel
                     </button>
                     <button
                       type="submit"
-                      style={{
-                        padding: "10px 32px",
-                        fontSize: "14px",
-                        fontWeight: "500",
-                        borderRadius: "4px",
-                      }}
+                   
                       className="btn btn-sm custom-outline-btn"
+                       style={{ minWidth: 90 }}
                     >
                       Apply
                     </button>

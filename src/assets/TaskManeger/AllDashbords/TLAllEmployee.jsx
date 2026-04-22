@@ -276,7 +276,7 @@ useEffect(() => {
             </thead>
 
             <tbody>
-              {members.length === 0 ? (
+             {filteredMembers.length === 0 ? (
                 <tr>
                   <td colSpan="6" className="text-center py-4" style={{ color: "#212529" }}>
                     No team members found.

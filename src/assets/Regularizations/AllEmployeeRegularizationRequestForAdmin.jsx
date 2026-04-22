@@ -407,7 +407,7 @@ function AllEmployeeRegularizationRequestForAdmin({ showBackButton = true }) {
       </div>
 
       {regularizations.length === 0 ? (
-        <div className="alert alert-info">
+        <div className="alert alert-info text-center">
           No regularization requests found.
         </div>
       ) : (
@@ -526,7 +526,7 @@ function AllEmployeeRegularizationRequestForAdmin({ showBackButton = true }) {
                       style={{ flex: 1, minWidth: "140px" }}
                       value={dateToFilter}
                       onChange={(e) => setDateToFilter(e.target.value)}
-                      // style={{flex: 1}} (if not using Bootstrap utility)
+                    // style={{flex: 1}} (if not using Bootstrap utility)
                     />
                   </div>
                 </>
@@ -679,8 +679,7 @@ function AllEmployeeRegularizationRequestForAdmin({ showBackButton = true }) {
                   {currentRegularizations.length === 0 ? (
                     <tr>
                       <td
-                        colSpan="7"
-                        className="text-center py-4"
+                        colSpan="9" className="text-center py-4"
                         style={{ color: "#6c757d" }}
                       >
                         No regularization requests found with status "
@@ -729,13 +728,13 @@ function AllEmployeeRegularizationRequestForAdmin({ showBackButton = true }) {
                           >
                             {employeeName
                               ? employeeName
-                                  .split(" ")
-                                  .map(
-                                    (w) =>
-                                      w.charAt(0).toUpperCase() +
-                                      w.slice(1).toLowerCase(),
-                                  )
-                                  .join(" ")
+                                .split(" ")
+                                .map(
+                                  (w) =>
+                                    w.charAt(0).toUpperCase() +
+                                    w.slice(1).toLowerCase(),
+                                )
+                                .join(" ")
                               : ""}
                           </td>
 
@@ -816,7 +815,7 @@ function AllEmployeeRegularizationRequestForAdmin({ showBackButton = true }) {
                             }}
                           >
                             {rec?.regularizationRequest?.status ===
-                            "Approved" ? (
+                              "Approved" ? (
                               <span
                                 style={{
                                   backgroundColor: "#d1f2dd",
@@ -875,7 +874,7 @@ function AllEmployeeRegularizationRequestForAdmin({ showBackButton = true }) {
                             }}
                           >
                             {rec?.regularizationRequest?.status ===
-                            "Pending" ? (
+                              "Pending" ? (
                               <>
                                 <button
                                   className="btn btn-sm btn-outline-success me-2"
@@ -993,7 +992,7 @@ function AllEmployeeRegularizationRequestForAdmin({ showBackButton = true }) {
                         <div className="col-7 col-sm-9">
                           {formatToIST(
                             selectedRequest.checkIn ||
-                              selectedRequest?.regularizationRequest?.checkIn,
+                            selectedRequest?.regularizationRequest?.checkIn,
                           )}
                         </div>
                       </div>
@@ -1005,7 +1004,7 @@ function AllEmployeeRegularizationRequestForAdmin({ showBackButton = true }) {
                         <div className="col-7 col-sm-9">
                           {formatToIST(
                             selectedRequest.checkOut ||
-                              selectedRequest?.regularizationRequest?.checkOut,
+                            selectedRequest?.regularizationRequest?.checkOut,
                           )}
                         </div>
                       </div>
@@ -1014,7 +1013,7 @@ function AllEmployeeRegularizationRequestForAdmin({ showBackButton = true }) {
                         <div className="col-5 col-sm-3 fw-semibold">Mode</div>
                         <div className="col-7 col-sm-9">
                           {selectedRequest.mode?.trim().toLowerCase() ===
-                          "office"
+                            "office"
                             ? "WFO"
                             : selectedRequest.mode || "-"}
                         </div>
@@ -1045,7 +1044,7 @@ function AllEmployeeRegularizationRequestForAdmin({ showBackButton = true }) {
                                 ?.status === "Approved"
                                 ? "bg-success"
                                 : selectedRequest?.regularizationRequest
-                                      ?.status === "Rejected"
+                                  ?.status === "Rejected"
                                   ? "bg-danger"
                                   : "bg-warning text-dark")
                             }
@@ -1061,15 +1060,15 @@ function AllEmployeeRegularizationRequestForAdmin({ showBackButton = true }) {
                         <>
                           <div className="row mb-2">
                             <div className="col-5 col-sm-3 fw-semibold">
-                              {selectedRequest?.regularizationRequest?.status === "Approved" 
-                                ? "Approved by" 
+                              {selectedRequest?.regularizationRequest?.status === "Approved"
+                                ? "Approved by"
                                 : "Rejected by"}
                             </div>
                             <div className="col-7 col-sm-9">
                               {selectedRequest?.regularizationRequest?.approvedByName ? (
                                 <>
                                   {selectedRequest.regularizationRequest.approvedByName}
-                                  {selectedRequest.regularizationRequest.approvedByRole && 
+                                  {selectedRequest.regularizationRequest.approvedByRole &&
                                     ` (${selectedRequest.regularizationRequest.approvedByRole})`}
                                 </>
                               ) : (
@@ -1106,30 +1105,30 @@ function AllEmployeeRegularizationRequestForAdmin({ showBackButton = true }) {
                   <div className="modal-footer border-0 pt-0">
                     {selectedRequest?.regularizationRequest?.status ===
                       "Pending" && (
-                      <>
-                        <button
-                         className="btn btn-sm btn-outline-success"
-                           style={{ width: 90 }}
-                          onClick={() => {
-                            handleStatusChange(selectedRequest._id, "Approved");
-                            setSelectedRequest(null);
-                          }}
-                        >
-                          Approve
-                        </button>
+                        <>
+                          <button
+                            className="btn btn-sm btn-outline-success"
+                            style={{ width: 90 }}
+                            onClick={() => {
+                              handleStatusChange(selectedRequest._id, "Approved");
+                              setSelectedRequest(null);
+                            }}
+                          >
+                            Approve
+                          </button>
 
-                        <button
-                          className="btn btn-sm btn-outline-danger"
-                           style={{ width: 90 }}
-                          onClick={() => {
-                            handleStatusChange(selectedRequest._id, "Rejected");
-                            setSelectedRequest(null);
-                          }}
-                        >
-                          Reject
-                        </button>
-                      </>
-                    )}
+                          <button
+                            className="btn btn-sm btn-outline-danger"
+                            style={{ width: 90 }}
+                            onClick={() => {
+                              handleStatusChange(selectedRequest._id, "Rejected");
+                              setSelectedRequest(null);
+                            }}
+                          >
+                            Reject
+                          </button>
+                        </>
+                      )}
                     {/* <button
                       className="btn btn-outline-danger"
 
@@ -1195,7 +1194,7 @@ function AllEmployeeRegularizationRequestForAdmin({ showBackButton = true }) {
                 style={{ marginLeft: "16px" }}
               >
                 <button
-               className="btn btn-sm focus-ring"
+                  className="btn btn-sm focus-ring"
                   onClick={() => handlePageChange(currentPage - 1)}
                   disabled={currentPage === 1}
                   style={{ fontSize: "18px", padding: "2px 8px" }}

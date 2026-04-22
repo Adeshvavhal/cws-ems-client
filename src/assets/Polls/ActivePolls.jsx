@@ -390,8 +390,8 @@ const ActivePolls = ({ user }) => {
 
   return (
     <div
-  className="card shadow-sm border-0"
-      style={{ borderRadius: "10px", width: "100%",maxWidth:"465px" }}
+      className="card shadow-sm border-0"
+      style={{ borderRadius: "10px", width: "100%", maxWidth: "465px" }}
     >
       <div
         className="card-header d-flex justify-content-between align-items-center"
@@ -660,35 +660,40 @@ const ActivePolls = ({ user }) => {
       )}
 
 
-      {popupPreviousPolls && (
+{popupPreviousPolls && (
         <div
-          className="modal fade show"
+      
           ref={modalRef}
           tabIndex="-1"
-     style={{
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "flex-start",  
-  position: "fixed",
-  inset: 0,
-  zIndex: 1055,               
-  background: "rgba(0,0,0,0.5)",
-  paddingTop: "100px",         
-  overflow: "hidden",
-}}
+
+  className="modal fade show d-block"
+  style={{
+    background: "#00000080",
+    overflow: "hidden"   // 🔥 scrollbar remove
+  }}
+
+               
           onClick={(e) => {
             if (e.target === e.currentTarget) {
               setPopupPreviousPolls(null);
             }
           }}
         >
-          <div className="modal-dialog modal-lg"
-style={{
-  width: "95%",
-  maxWidth: "600px",
-}}
-          >
-            <div className="modal-content">
+<div
+  className="modal-dialog modal-lg modal-dialog-centered"
+  style={{
+    width: "600px",
+    marginTop: window.innerWidth < 768 ? "80px" : "",
+    maxHeight: window.innerWidth < 768 ? "calc(100vh - 80px)" : "auto"
+  }}
+>
+            <div
+  className="modal-content"
+  style={{
+    maxHeight: "90vh",
+    overflowY: "auto"
+  }}
+>
               {/* HEADER */}
               <div className="modal-header text-white"
                 style={{ backgroundColor: "#3A5FBE" }}
@@ -801,7 +806,6 @@ style={{
           </div>
         </div>
       )}
-
 
       {/* rutuja code start */}
       {showVotedMembers && (

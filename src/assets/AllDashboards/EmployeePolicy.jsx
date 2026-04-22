@@ -477,9 +477,13 @@ function EmployeePolicy({ user }) {
       </div>
 
       {/* 📋 Policy List */}
-      {filteredPolicies.length === 0 && (
-        <p style={{ color: "#6b7280" }}>No policies available</p>
-      )}
+   {currentPolicies.length === 0 && (
+    <tr>
+      <td colSpan="6" style={{ padding: "20px", textAlign: "center", color: "#6b7280" }}>
+        No policies available
+      </td>
+    </tr>
+  )}
       <div className="card shadow-sm border-0">
         <div className="table-responsive bg-white">
           <table className="table table-hover mb-0">

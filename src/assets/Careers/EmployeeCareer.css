@@ -406,3 +406,26 @@
     padding-right: 0.5rem;
   }
 }
+
+.watermark-body {
+  position: relative;
+}
+
+.watermark-body::before {
+  content: "APPLICATION CLOSED";
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-20deg);
+
+  font-size: clamp(35px, 8vw, 55px); /* 🔥 responsive */
+  font-weight: bold;
+  color: rgba(244, 7, 7, 0.25);
+
+  max-width: 90%;        
+  text-align: center;
+
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 1056;
+}
