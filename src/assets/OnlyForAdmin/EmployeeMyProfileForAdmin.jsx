@@ -32,7 +32,7 @@ function EmployeeProfileForAdmin({ employee: stateEmployee }) {
         try {
           const token = localStorage.getItem("accessToken");
           const res = await axios.get(
-            `http://localhost:8000/getEmployee/${empId}`,
+            `https://cws-ems-server.vercel.app/getEmployee/${empId}`,
             {
               headers: { Authorization: `Bearer ${token}` },
             },
@@ -405,7 +405,7 @@ function EmployeeProfileForAdmin({ employee: stateEmployee }) {
       });
 
       await axios.put(
-        `http://localhost:8000/employees/${employee._id || empId}`,
+        `https://cws-ems-server.vercel.app/employees/${employee._id || empId}`,
         data,
         {
           headers: {
@@ -419,7 +419,7 @@ function EmployeeProfileForAdmin({ employee: stateEmployee }) {
       setIsEditing(false);
 
       const updated = await axios.get(
-        `http://localhost:8000/getEmployee/${employee._id || empId}`,
+        `https://cws-ems-server.vercel.app/getEmployee/${employee._id || empId}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         },
@@ -509,7 +509,7 @@ function EmployeeProfileForAdmin({ employee: stateEmployee }) {
 
     const url = fileName.startsWith("http")
       ? fileName
-      : `http://localhost:8000/uploads/${fileName}`;
+      : `https://cws-ems-server.vercel.app/uploads/${fileName}`;
 
     const fileType = getFileType(fileName);
 
@@ -548,7 +548,7 @@ function EmployeeProfileForAdmin({ employee: stateEmployee }) {
     try {
       const token = localStorage.getItem("accessToken");
       const res = await axios.delete(
-        `http://localhost:8000/deleteEmployee/${id}`,
+        `https://cws-ems-server.vercel.app/deleteEmployee/${id}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         },
@@ -600,7 +600,7 @@ function EmployeeProfileForAdmin({ employee: stateEmployee }) {
                   src={
                     employee?.image?.startsWith("http")
                       ? employee.image
-                      : `http://localhost:8000/uploads/${employee.image}`
+                      : `https://cws-ems-server.vercel.app/uploads/${employee.image}`
                   }
                   alt="Profile Preview"
                   style={{
@@ -1161,7 +1161,7 @@ function EmployeeProfileForAdmin({ employee: stateEmployee }) {
                       href={
                         employee[field]?.startsWith("http")
                           ? employee[field]
-                          : `http://localhost:8000/uploads/${employee[field]}`
+                          : `https://cws-ems-server.vercel.app/uploads/${employee[field]}`
                       }
                       target="_blank"
                       rel="noopener noreferrer"
@@ -1192,7 +1192,7 @@ function EmployeeProfileForAdmin({ employee: stateEmployee }) {
 
                 ) : employee.bankDetails?.passbookPdf ? (
                   <a
-                    href={`http://localhost:8000/uploads/${employee.bankDetails.passbookPdf}`}
+                    href={`https://cws-ems-server.vercel.app/uploads/${employee.bankDetails.passbookPdf}`}
                     target="_blank"
                     rel="noopener noreferrer"
                   >

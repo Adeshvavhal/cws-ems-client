@@ -546,7 +546,7 @@ const handleBack = () => {
       });
 
       const res = await axios.post(
-        "http://localhost:8000/admin/add-employee",
+        "https://cws-ems-server.vercel.app/admin/add-employee",
         payload,
         {
           headers: { "Content-Type": "multipart/form-data" },
