@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
-import { NavLink, useNavigate, useParams } from "react-router-dom";
+import { NavLink, useNavigate, useParams,useLocation } from "react-router-dom";
 import EmployeeProfileForAdmin from "./EmployeeMyProfileForAdmin";
 import AddEmployee from "../LoginRegistration/AddEmployee";
 
@@ -32,48 +32,56 @@ const [showMdModal, setShowMdModal] = useState(false);
   const [selectedMdId, setSelectedMdId] = useState("");
   const [mdList, setMdList] = useState([]);
   const [mdMessage, setMdMessage] = useState("");
+  const [filterDate, setFilterDate] = useState("");
+  const location = useLocation();
 
-  const handleSearch = () => {
-    const value = searchName.toLowerCase().trim();
+useEffect(() => {
+  if (location.state?.openOldEmployees) {
+    setShowOldEmployees(true);
+    setFilteredEmployees(oldEmployees);
+  }
+}, [location.state, oldEmployees]);
 
-    if (!value) {
-      const displayedList = showOldEmployees ? oldEmployees : employees;
-      setFilteredEmployees(displayedList);
-      setCurrentPage(1);
-      return;
-    }
+const handleSearch = () => {
+  const value = searchName.toLowerCase().trim();
 
-    const listToSearch = showOldEmployees ? oldEmployees : employees;
+  const listToSearch = showOldEmployees ? oldEmployees : employees;
 
-    const filtered = listToSearch.filter((emp) => {
-      const id = emp.employeeId?.toString().toLowerCase() || "";
-      const name = emp.name?.toLowerCase() || "";
-      const email = emp.email?.toLowerCase() || "";
-      const dept = emp.department?.toLowerCase() || "";
-      const role = emp.role?.toLowerCase() || "";
-      const doj = emp.doj
-        ? new Date(emp.doj).toLocaleDateString().toLowerCase()
-        : "";
+  const filtered = listToSearch.filter((emp) => {
+    const id = emp.employeeId?.toLowerCase() || "";
+    const name = emp.name?.toLowerCase() || "";
+    const email = emp.email?.toLowerCase() || "";
+    const dept = emp.department?.toLowerCase() || "";
+    const role = emp.role?.toLowerCase() || "";
 
-      return (
-        id.includes(value) ||
-        name.includes(value) ||
-        email.includes(value) ||
-        dept.includes(value) ||
-        role.includes(value) ||
-        doj.includes(value)
-      );
-    });
+    const searchMatch =
+      !value ||
+      id.includes(value) ||
+      name.includes(value) ||
+      email.includes(value) ||
+      dept.includes(value) ||
+      role.includes(value);
 
-    setFilteredEmployees(filtered);
-    setCurrentPage(1);
-  };
+    const doj = emp.doj || emp.createdAt;
+
+    const dateMatch =
+      !filterDate ||
+      (doj &&
+        new Date(doj).toISOString().split("T")[0] === filterDate);
+
+    return searchMatch && dateMatch;
+  });
+
+  setFilteredEmployees(filtered);
+  setCurrentPage(1);
+};
 
   const handleResetSearch = () => {
     setSearchName("");
     const displayedList = showOldEmployees ? oldEmployees : employees;
     setFilteredEmployees(displayedList);
     setCurrentPage(1);
+    setFilterDate("");
   };
 
   const toggleOldEmployees = () => {
@@ -157,7 +165,7 @@ useEffect(() => {
 
     try {
       const token = localStorage.getItem("accessToken");
-      await axios.delete(`https://cws-ems-server.vercel.app/soft/deleteEmployee/${id}`, {
+      await axios.delete(`http://localhost:8000/soft/deleteEmployee/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -185,16 +193,31 @@ useEffect(() => {
     try {
       const token = localStorage.getItem("accessToken");
       const res = await axios.delete(
-        `https://cws-ems-server.vercel.app/deleteEmployee/${id}`,
+        `http://localhost:8000/deleteEmployee/${id}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         },
       );
 
-      if (res.data.success) {
-        setEmployees((prev) => prev.filter((emp) => emp._id !== id));
-        setOldEmployees((prev) => prev.filter((emp) => emp._id !== id));
-        alert("Employee permanently deleted!");
+   if (res.data.success) {
+  setEmployees((prev) => prev.filter((emp) => emp._id !== id));
+
+  setOldEmployees((prev) => {
+    const updated = prev.filter((emp) => emp._id !== id);
+
+    if (showOldEmployees) {
+      setFilteredEmployees(updated);
+    }
+
+    return updated;
+  });
+
+  setFilteredEmployees((prev) =>
+    prev.filter((emp) => emp._id !== id)
+  );
+
+  alert("Employee permanently deleted!");
+
       } else {
         alert("Failed to delete employee.");
       }
@@ -214,7 +237,7 @@ useEffect(() => {
     const fetchEmployees = async () => {
       try {
         const token = localStorage.getItem("accessToken");
-        const res = await axios.get("https://cws-ems-server.vercel.app/getAllEmployees", {
+        const res = await axios.get("http://localhost:8000/getAllEmployees", {
           headers: { Authorization: `Bearer ${token}` },
         });
         //Geetanjali
@@ -266,7 +289,7 @@ useEffect(() => {
     try {
       const token = localStorage.getItem("accessToken");
       await axios.put(
-        `https://cws-ems-server.vercel.app/users/${selectedEmployee._id}/assign-manager`,
+        `http://localhost:8000/users/${selectedEmployee._id}/assign-manager`,
         { managerId: selectedManagerId },
         { headers: { Authorization: `Bearer ${token}` } },
       );
@@ -315,7 +338,7 @@ useEffect(() => {
     try {
       const token = localStorage.getItem("accessToken");
       await axios.put(
-        `https://cws-ems-server.vercel.app/assignMd/${selectedManagerForMd._id}`,
+        `http://localhost:8000/assignMd/${selectedManagerForMd._id}`,
         { mdId: selectedMdId },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -472,7 +495,27 @@ useEffect(() => {
                 onChange={(e) => setSearchName(e.target.value)}
               />
             </div>
-
+     <div className="col-12 col-md-auto d-flex align-items-center  mb-1">
+                    <label
+                      className="fw-bold mb-0 text-start text-md-end"
+                      style={{
+                        fontSize: "16px",
+                        color: "#3A5FBE",
+                        width: "50px",
+                        minWidth: "50px",
+                        marginRight: "8px",
+                      }}
+                    >
+                      Date
+                    </label>
+                 <input
+                    className="form-control"
+                    type="date"
+                    value={filterDate}
+                    onChange={(e) => setFilterDate(e.target.value)}
+                    style={{ minWidth: 150 }}
+                  />
+                  </div>
             {/* Filter and Reset Buttons */}
             <div className="d-flex gap-2 ms-auto">
               <button
@@ -607,7 +650,7 @@ useEffect(() => {
                   whiteSpace: "nowrap",
                 }}
               >
-                Date Of Joining
+                Date of Joining
               </th>
               <th
                 style={{
@@ -718,11 +761,12 @@ useEffect(() => {
 
                 <td style={{ display: "flex", gap: "5px" }}>
                   <NavLink
-                    to={`/dashboard/${role}/${username}/${id}/employeeprofile/${emp._id}`}
-                    className="btn btn-sm custom-outline-btn"
-                  >
-                    View
-                  </NavLink>
+  to={`/dashboard/${role}/${username}/${id}/employeeprofile/${emp._id}`}
+  state={{ fromOldEmployees: showOldEmployees }}
+  className="btn btn-sm custom-outline-btn"
+>
+  View
+</NavLink>
 
                   {/* {!showOldEmployees && userRole === "admin" && (
                     <button
@@ -746,16 +790,18 @@ useEffect(() => {
 {!showOldEmployees && userRole === "admin" && (
                     <>
                       {emp.role === "manager" ? (
-                        <button
+                       <button
                           className="btn btn-sm btn-outline-success me-2"
                           disabled={restrictedRoles.includes(
                             emp.role?.trim().toLowerCase(),
                           )}
-                          style={{
+                            style={{
+                            width: "117px",
+                            height: "31px",
                             whiteSpace: "nowrap",
-                              height: "31px", 
-                              alignItems: "center",
-                              justifyContent: "center"
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
                           }}
                           onClick={() => handleAssignMdClick(emp)}
                         >
@@ -782,6 +828,7 @@ useEffect(() => {
                       )}
                     </>
                   )}
+                  
                   {/* Hide delete buttons on Old Employee view */}
                   {!showOldEmployees && userRole === "admin" && (
                     <button
@@ -810,6 +857,7 @@ useEffect(() => {
                 </td>
               </tr>
             ))}
+            
           </tbody>
         </table>
       </div>

@@ -37,7 +37,7 @@ function AdminDashboard({ user }) {
       try {
         const token = localStorage.getItem("accessToken");
         const authAxios = axios.create({
-          baseURL: "https://cws-ems-server.vercel.app",
+          baseURL: "http://localhost:8000",
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -183,14 +183,17 @@ function AdminDashboard({ user }) {
   console.log("allRequests", allRequests);
 
   return (
-    <div className="container-fluid pt-1 px-3" style={{ marginTop: "-25px" }}>
+<div className="container-fluid pt-2 px-3" style={{ marginTop: "0px" }}>
       {/* Top Row: Summary Cards */}
       <div className="row g-2  align-items-stretch">
         {/* Total Employees */}
         <div className="col-md-8">
           <div className="row g-2">
-            <div className="col-md-6 mt-3">
-              <div className="card shadow-sm h-100">
+            <div className="col-md-6 ">
+              <div
+      className="card shadow-sm h-100 border-0 "
+      style={{ borderRadius: "10px" }}
+    >
                 <div className="card-body d-flex justify-content-between align-items-center">
                   {/* Employee Count */}
                   {/* <h4 className="text-success mb-0" style={{fontSize:"50px"}}>{employees.length}</h4> */}
@@ -245,8 +248,11 @@ function AdminDashboard({ user }) {
               </div>
             </div>
             {/* Pending Leaves */}
-            <div className="col-md-6 mt-3">
-              <div className="card shadow-sm text-center h-100">
+            <div className="col-md-6 ">
+              <div
+      className="card shadow-sm h-100 border-0 "
+      style={{ borderRadius: "10px" }}
+    >
                 <div className="card-body d-flex justify-content-between align-items-center">
                   <div
                     style={{
@@ -292,8 +298,11 @@ function AdminDashboard({ user }) {
             </div>
 
             {/* Attendance Regularization */}
-            <div className="col-md-6 mt-3">
-              <div className="card shadow-sm text-center h-100">
+            <div className="col-md-6 ">
+                <div
+      className="card shadow-sm h-100 border-0 "
+      style={{ borderRadius: "10px" }}
+    >
                 <div className="card-body d-flex justify-content-between align-items-center">
                   <div
                     style={{
@@ -338,8 +347,11 @@ function AdminDashboard({ user }) {
               </div>
             </div>
             {/* Todays Attendance */}
-            <div className="col-md-6 mt-3">
-              <div className="card shadow-sm text-center h-100">
+            <div className="col-md-6 ">
+             <div
+      className="card shadow-sm h-100 border-0 "
+      style={{ borderRadius: "10px" }}
+    >
                 <div className="card-body d-flex justify-content-between align-items-center">
                   <div
                     style={{
@@ -385,7 +397,7 @@ function AdminDashboard({ user }) {
             </div>
           </div>
         </div>
-        <div className="col-md-4 mt-3">
+        <div className="col-md-4 ">
           <HolidaysCards />
         </div>
 
@@ -393,10 +405,13 @@ function AdminDashboard({ user }) {
       </div>
 
       {/* Row 3: Employee Registry + Leave Requests + Events */}
-      <div className="row g-2 mt-3">
+      <div className="row g-2 mt-2">
         {/* Recent Employee Registry */}
-        <div className="col-md-4">
-          <div className="card shadow-sm h-100">
+       <div className="col-12 col-sm-6 col-md-4">
+  <div
+      className="card shadow-sm h-100 border-0 "
+      style={{ borderRadius: "10px" }}
+    >
             <div
               className="card-header d-flex justify-content-between align-items-center"
               style={{ backgroundColor: "#fff" }}
@@ -490,8 +505,11 @@ function AdminDashboard({ user }) {
         </div>
 
         {/* Leave & Regularization Requests */}
-        <div className="col-md-4">
-          <div className="card shadow-sm h-100">
+       <div className="col-12 col-sm-6 col-md-4">
+      <div
+      className="card shadow-sm h-100 border-0 "
+      style={{ borderRadius: "10px" }}
+    >
             <div
               className="card-header d-flex justify-content-between align-items-center"
               style={{ backgroundColor: "#fff" }}
@@ -631,19 +649,19 @@ function AdminDashboard({ user }) {
         </div>
 
         {/* Events Section */}
-        <div className="col-md-4">
+      <div className="col-12 col-sm-6 col-md-4">
           <EventCard />
         </div>
-        <div className="row g-2 mt-3">
+       
         
       
 
       {/*  Poll */}
-      <div className="col-md-4">
+   <div className="col-12 col-md-4">
         <ActivePolls user={user} />
       </div>
 
-    </div>
+    
       </div>
     </div>
   );

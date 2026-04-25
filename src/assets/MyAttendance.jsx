@@ -789,9 +789,16 @@ function MyAttendance({ employeeId }) {
       if (todayRecord?.checkOut) {
         return alert("Already checked out today!");
       }
+      navigator.geolocation.getCurrentPosition(async (position) => {
+        const address = await getAddressFromCoords(position.coords.latitude, position.coords.longitude);
 
       // call backend - keep the same path style as checkin
-      await authAxios.post(`/attendance/${employeeId}/checkout`);
+    await authAxios.post(`/attendance/${employeeId}/checkout`, {
+        lat: position.coords.latitude,
+        lng: position.coords.longitude,
+        address: address,
+      });
+
 
       // success message
       alert("Checked Out Successfully");
@@ -811,6 +818,7 @@ function MyAttendance({ employeeId }) {
           ? { ...prev, checkOut: new Date().toISOString() }
           : prev,
       );
+      })
     } catch (err) {
       console.error("Checkout error:", err);
       alert(err?.response?.data?.message || "Checkout Failed");

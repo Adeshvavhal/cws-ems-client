@@ -33,7 +33,7 @@ const ActivePolls = ({ user }) => {
   useEffect(() => {
     const fetchActivePoll = async () => {
       try {
-        const res = await axios.get("https://cws-ems-server.vercel.app/api/polls/active");
+        const res = await axios.get("http://localhost:8000/api/polls/active");
         if (res.data) {
           setSavedPolls([res.data]);
         }
@@ -130,7 +130,7 @@ const ActivePolls = ({ user }) => {
   useEffect(() => {
     const fetchPreviousPolls = async () => {
       try {
-        const res = await axios.get("https://cws-ems-server.vercel.app/api/polls/previous");
+        const res = await axios.get("http://localhost:8000/api/polls/previous");
         setPreviousPolls(res.data);
       } catch (err) {
         console.error(err);
@@ -162,7 +162,7 @@ const ActivePolls = ({ user }) => {
     try {
       const token = localStorage.getItem("accessToken");
       const res = await axios.post(
-        "https://cws-ems-server.vercel.app/api/polls/create",
+        "http://localhost:8000/api/polls/create",
         {
           question: pollQuestion,
           description: pollDescription,
@@ -172,7 +172,7 @@ const ActivePolls = ({ user }) => {
       );
 
       const activeRes = await axios.get(
-        "https://cws-ems-server.vercel.app/api/polls/active"
+        "http://localhost:8000/api/polls/active"
       );
 
       setSavedPolls(activeRes.data ? [activeRes.data] : []);
@@ -206,7 +206,7 @@ const ActivePolls = ({ user }) => {
       const token = localStorage.getItem("accessToken");
 
       const response = await axios.put(
-        `https://cws-ems-server.vercel.app/api/polls/${editingPoll._id}`,
+        `http://localhost:8000/api/polls/${editingPoll._id}`,
         {
           question: editQuestion,
           description: editDescription,
@@ -286,7 +286,7 @@ const ActivePolls = ({ user }) => {
     try {
       const token = localStorage.getItem("accessToken");
       await axios.delete(
-        `https://cws-ems-server.vercel.app/api/polls/${pollId}`,
+        `http://localhost:8000/api/polls/${pollId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
@@ -307,7 +307,7 @@ const ActivePolls = ({ user }) => {
     try {
       const token = localStorage.getItem("accessToken");
       const res = await axios.get(
-        `https://cws-ems-server.vercel.app/api/polls/${pollId}/voted-members`,
+        `http://localhost:8000/api/polls/${pollId}/voted-members`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
@@ -347,7 +347,7 @@ const ActivePolls = ({ user }) => {
 
 
       const res = await axios.post(
-        "https://cws-ems-server.vercel.app/api/polls/vote",
+        "http://localhost:8000/api/polls/vote",
         { pollId, optionIndex, userId: loggedInUserId },
         { headers: { Authorization: `Bearer ${token}` } }
 
@@ -389,10 +389,11 @@ const ActivePolls = ({ user }) => {
   };
 
   return (
-    <div
-      className="card shadow-sm border-0"
-      style={{ borderRadius: "10px", width: "100%", maxWidth: "465px" }}
-    >
+<div
+  className="card shadow-sm border-0 h-100"
+  style={{ borderRadius: "10px", width: "100%" }}
+>
+    
       <div
         className="card-header d-flex justify-content-between align-items-center"
         style={{ backgroundColor: "#fff", borderRadius: "12px 12px 0 0", gap: "0.5rem" }}
@@ -660,7 +661,7 @@ const ActivePolls = ({ user }) => {
       )}
 
 
-{popupPreviousPolls && (
+      {popupPreviousPolls && (
         <div
       
           ref={modalRef}
@@ -800,12 +801,21 @@ const ActivePolls = ({ user }) => {
                   </p>
                 )}
               </div>
-
+<div className="modal-footer">
+  <button
+    className="btn btn-sm custom-outline-btn"
+    style={{ minWidth: "90px" }}
+    onClick={() => setPopupPreviousPolls(null)}
+  >
+    Close
+  </button>
+</div>
 
             </div>
           </div>
         </div>
       )}
+
 
       {/* rutuja code start */}
       {showVotedMembers && (
@@ -813,18 +823,29 @@ const ActivePolls = ({ user }) => {
           className="modal fade show"
           ref={modalRef}
           tabIndex="-1"
-          style={{ display: "block", background: "rgba(0,0,0,0.5)" }}
+       style={{
+  display: "block",
+  background: "rgba(0,0,0,0.5)",
+  zIndex: 2000,
+  padding: "10px",
+}}
           onClick={() => setShowVotedMembers(false)}
         >
-          <div
-            className="modal-dialog"
-            style={{
-              maxWidth: "700px",
-              width: "95%",
-              marginTop: "100px",
-            }}
-          >
-            <div className="modal-content">
+        <div
+  className="modal-dialog modal-dialog-centered"
+  style={{
+    maxWidth: "700px",
+    width: "95%",
+    margin: "0 auto",
+  }}
+>
+           <div
+  className="modal-content"
+  style={{
+    maxHeight: "90vh",
+    overflowY: "auto",
+  }}
+>
               {/* HEADER */}
               <div
                 className="modal-header text-white"
@@ -901,20 +922,33 @@ const ActivePolls = ({ user }) => {
           className="modal fade show"
           ref={modalRef}
           tabIndex="-1"
-          style={{ display: "block", background: "rgba(0,0,0,0.5)" }}
+       style={{
+  display: "block",
+  background: "rgba(0,0,0,0.5)",
+  zIndex: 2000,
+  padding: "10px",
+}}
           onClick={(e) => {
             if (e.target === e.currentTarget) setShowEditPoll(false);
           }}
         >
+        
           <div
-            className="modal-dialog"
-            style={{
-              maxWidth: "650px",
-              width: "95%",
-              marginTop: "80px",
-            }}
-          >
-            <div className="modal-content">
+  className="modal-dialog modal-dialog-centered"
+  style={{
+    maxWidth: "650px",
+    width: "95%",
+    margin: "0 auto",
+  }}
+>
+          
+       <div
+  className="modal-content"
+  style={{
+    maxHeight: "90vh",
+    overflowY: "auto",
+  }}
+>
               {/* HEADER */}
               <div
                 className="modal-header text-white"
@@ -935,12 +969,24 @@ const ActivePolls = ({ user }) => {
                   value={editQuestion}
                   onChange={(e) => setEditQuestion(e.target.value)}
                 />
-
-                {editOptions.map((opt, index) => (
-                  <div key={index} className="d-flex mb-2">
-                    <input type="radio" disabled className="me-2 mt-2" />
+{editOptions.map((opt, index) => (
+  <div
+  key={index}
+  className="d-flex align-items-center mb-2"
+  style={{ gap: "8px", width: "100%" }}
+>
+                  <input
+  type="radio"
+  disabled
+  style={{ margin: 0, flexShrink: 0 }}
+/>
                     <input
-                      className="form-control me-2"
+                     
+  className="form-control"
+  style={{
+    flex: 1,
+    minWidth: 0,
+  }}
                       placeholder={`Option ${index + 1}`}
                       value={opt.text}
                       onChange={(e) => updateEditOption(index, e.target.value)}

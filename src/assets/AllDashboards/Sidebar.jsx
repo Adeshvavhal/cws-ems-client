@@ -20,6 +20,7 @@ function Sidebar({ handleLogout }) {
   const { role, username, id } = useParams();
   const [isOpen, setIsOpen] = useState(false);
   const sidebarRef = useRef(null);
+  const buttonRef = useRef(null);
   // Close sidebar when link is clicked (mobile)
   const handleLinkClick = () => {
     if (window.innerWidth <= 768) {
@@ -29,13 +30,15 @@ function Sidebar({ handleLogout }) {
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (
-        isOpen &&
-        sidebarRef.current &&
-        !sidebarRef.current.contains(event.target)
-      ) {
-        setIsOpen(false);
-      }
+if (
+  isOpen &&
+  sidebarRef.current &&
+  !sidebarRef.current.contains(event.target) &&
+  buttonRef.current &&
+  !buttonRef.current.contains(event.target)
+) {
+  setIsOpen(false);
+}
     };
 
     document.addEventListener("mousedown", handleClickOutside);
@@ -51,13 +54,17 @@ function Sidebar({ handleLogout }) {
     <>
       {/* Toggle button for small screens */}
       <button
+        ref={buttonRef}
         className="btn btn-primary d-md-none position-fixed m-2"
         style={{
           zIndex: 1100,
           backgroundColor: "#3A5FBE",
           borderColor: "#fcfcfcff",
         }}
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={(e) => {
+  e.stopPropagation();
+  setIsOpen((prev) => !prev);
+}}
       >
         ☰
       </button>

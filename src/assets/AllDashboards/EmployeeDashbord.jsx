@@ -1606,12 +1606,12 @@ const handleStartBreak = async () => {
               </div>
             </div>
 
-            <div className="row mt-3">
-              <div className="col-md-6 mb-2">
+      <div className="row g-3 mt-2">
+              <div className="col-md-6 ">
                 {" "}
                 <EventCard />
               </div>
-              <div className="col-md-6 mb-2">
+              <div className="col-md-6 mb-2 ">
                 <HolidaysCard />
               </div>
             </div>
@@ -1621,13 +1621,14 @@ const handleStartBreak = async () => {
             {/* ✅ Break Card */}
           </div>
 
-          <div className="col-md-4 mb-2 mt-3 mt-md-0">
+      <div className="col-md-4 mb-2 mt-2">
             <div
               className="w-100"
               style={{
-                minHeight: "530px",
-                height: "530px",
+                minHeight: "540px",
+    height: "535px",
                 display: "flex",
+                marginTop:"-10px"
               }}
             >
               <MyAttendanceCalender employeeId={user._id} />

@@ -31,6 +31,7 @@ const [status, setStatus] = useState("All");
   const totalPages = Math.ceil(tickets.length / rowsPerPage);
   const [showTickets, setShowTickets] = useState(false);
   const [showRaiseModal, setShowRaiseModal] = useState(false);
+  const [isFilterApplied, setIsFilterApplied] = useState(false);
   const [formData, setFormData] = useState({
     employeeName: "",
     category: "",
@@ -125,17 +126,46 @@ const fetchTickets = async () => {
     console.error("Fetch tickets error:", err);
   }
 };
-useEffect(() => {
-  setTickets(allTickets);
-    fetchTickets();
-}, [allTickets]);
+
 
   useEffect(() => {
     fetchTickets();
     const interval = setInterval(fetchTickets, 8000);
     return () => clearInterval(interval);
   }, []);
+  
+useEffect(() => {
+  if (!isFilterApplied) {
+    setTickets(allTickets);
+    return;
+  }
 
+  let filtered = [...allTickets];
+
+  if (status !== "All") {
+    filtered = filtered.filter((t) => t.status === status);
+  }
+
+  if (fromDate || toDate) {
+    filtered = filtered.filter((t) => {
+      const raisedDate = new Date(t.raisedDate);
+
+      const from = fromDate ? new Date(fromDate) : null;
+      const to = toDate ? new Date(toDate) : null;
+
+      if (from) from.setHours(0, 0, 0, 0);
+      if (to) to.setHours(23, 59, 59, 999);
+
+      if (from && raisedDate < from) return false;
+      if (to && raisedDate > to) return false;
+
+      return true;
+    });
+  }
+
+  setTickets(filtered);
+  setCurrentPage(1);
+}, [allTickets, isFilterApplied, status, fromDate, toDate]);
  
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -304,35 +334,61 @@ useEffect(() => {
     }
   };
 const applyFilter = () => {
+  const today = new Date();
+  today.setHours(23, 59, 59, 999);
+
+  if (fromDate && new Date(fromDate) > today) {
+    alert('"From" date cannot be a future date.');
+    setTickets([]);
+    return;
+  }
+
+  if (toDate && new Date(toDate) > today) {
+    alert('"To" date cannot be a future date.');
+    setTickets([]);
+    return;
+  }
+
+  if (fromDate && toDate && new Date(fromDate) > new Date(toDate)) {
+    alert('"From" date cannot be later than "To" date.');
+    return;
+  }
+
   let filtered = [...allTickets];
 
   if (status !== "All") {
     filtered = filtered.filter((t) => t.status === status);
   }
 
-  if (fromDate) {
-    filtered = filtered.filter(
-      (t) => new Date(t.raisedDate) >= new Date(fromDate)
-    );
-  }
+  if (fromDate || toDate) {
+    filtered = filtered.filter((t) => {
+      const raisedDate = new Date(t.raisedDate);
 
-  if (toDate) {
-    filtered = filtered.filter(
-      (t) => new Date(t.raisedDate) <= new Date(toDate)
-    );
+      const from = fromDate ? new Date(fromDate) : null;
+      const to = toDate ? new Date(toDate) : null;
+
+      if (from) from.setHours(0, 0, 0, 0);
+      if (to) to.setHours(23, 59, 59, 999);
+
+      if (from && raisedDate < from) return false;
+      if (to && raisedDate > to) return false;
+
+      return true;
+    });
   }
 
   setTickets(filtered);
   setCurrentPage(1);
+  setIsFilterApplied(true);
 };
-
-  const resetFilter = () => {
-    setStatus("All");
-    setFromDate("");
-    setToDate("");
-    setTickets(allTickets);
-    setCurrentPage(1); // ✅ reset page
-  };
+const resetFilter = () => {
+  setStatus("All");
+  setFromDate("");
+  setToDate("");
+  setTickets(allTickets);
+  setCurrentPage(1);
+  setIsFilterApplied(false);
+};
   const deleteTicket = async (id) => {
     if (!window.confirm("Are you sure you want to delete this ticket?")) {
       return;
@@ -490,14 +546,15 @@ const applyFilter = () => {
               >
                 From
               </label>
-              <input
-                id="fromDate"
-                type="date"
-                className="form-control"
-                style={{ minWidth: 120 }}
-                value={fromDate}
-                onChange={(e) => setFromDate(e.target.value)}
-              />
+            <input
+  id="fromDate"
+  type="date"
+  className="form-control"
+  style={{ minWidth: 120 }}
+  value={fromDate}
+  max={new Date().toISOString().split("T")[0]}
+  onChange={(e) => setFromDate(e.target.value)}
+/>
             </div>
 
             <div className="col-12 col-md-auto d-flex align-items-center mb-1 gap-4">
@@ -512,14 +569,15 @@ const applyFilter = () => {
               >
                 To
               </label>
-              <input
-                id="toDate"
-                type="date"
-                className="form-control"
-                style={{ minWidth: 140 }}
-                value={toDate}
-                onChange={(e) => setToDate(e.target.value)}
-              />
+           <input
+  id="toDate"
+  type="date"
+  className="form-control"
+  style={{ minWidth: 140 }}
+  value={toDate}
+  max={new Date().toISOString().split("T")[0]}
+  onChange={(e) => setToDate(e.target.value)}
+/>
             </div>
 
             <div className="col-auto ms-auto d-flex gap-2">

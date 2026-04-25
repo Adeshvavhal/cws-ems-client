@@ -8,6 +8,7 @@ const AddEmployee = () => {
   const [errors, setErrors] = useState({});
   const [step, setStep] = useState(1);
   const [showModal, setShowModal] = useState(false);
+  
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -43,7 +44,31 @@ const AddEmployee = () => {
     pfNumber: "",
     uanNumber: "",
   });
+  const [sameAddress, setSameAddress] = useState(false);
+
+const handleSameAddress = (e) => {
+  const checked = e.target.checked;
+  setSameAddress(checked);
+
+  if (checked) {
+    setFormData((prev) => ({
+      ...prev,
+      permanentAddress: { ...prev.currentAddress },
+    }));
+  } else {
+    setFormData((prev) => ({
+      ...prev,
+      permanentAddress: {
+        street: "",
+        city: "",
+        state: "",
+        zip: "",
+      },
+    }));
+  }
+};
   const modalRef = useRef(null);
+ const scrollRef = useRef(null);
   const [files, setFiles] = useState({
     image: null,
     panCardPdf: null,
@@ -161,171 +186,190 @@ const AddEmployee = () => {
       document.documentElement.style.overflow = "";
     };
   }, [showModal]);
-  const validateField = (name, value) => {
-    let error = "";
+const validateField = (name, value) => {
+  let error = "";
 
-    switch (name) {
-      case "name":
-        if (!value.trim()) {
-          error = "Name is required.";
-        } else if (!/^[A-Za-z\s]+$/.test(value)) {
-          error = "Name must contain only letters and spaces.";
+  switch (name) {
+    case "name":
+      if (!value.trim()) {
+        error = "Name is required.";
+      } else if (!/^[A-Za-z\s]+$/.test(value.trim())) {
+        error = "Name must contain only letters and spaces.";
+      }
+      break;
+
+    case "email":
+      if (!value.trim()) {
+        error = "Email is required.";
+      } else if (
+        !/^[a-zA-Z0-9._%+-]+@(gmail\.com|creativewebsolution\.in)$/.test(
+          value.trim(),
+        )
+      ) {
+        error = "Please enter a valid email address.";
+      }
+      break;
+
+    case "contact":
+      if (!value.trim()) {
+        error = "Contact number is required.";
+      } else if (!/^\d{10}$/.test(value.trim())) {
+        error = "Contact number must be exactly 10 digits.";
+      }
+      break;
+
+    case "employeeId":
+      if (!value.trim()) {
+        error = "Employee ID is required.";
+      }
+      break;
+
+    case "salary":
+      if (!value) {
+        error = "Salary is required.";
+      } else if (Number(value) <= 0) {
+        error = "Salary must be greater than 0.";
+      }
+      break;
+
+    case "dob":
+      if (!value) {
+        error = "Date of birth is required.";
+      } else {
+        const minDate = new Date();
+        minDate.setFullYear(minDate.getFullYear() - 18);
+
+        if (new Date(value) > minDate) {
+          error = "Employee must be at least 18 years old.";
         }
-        break;
+      }
+      break;
 
-      case "email":
-        if (!value.trim()) {
-          error = "Email is required.";
-        } else if (
-          !/^[a-zA-Z0-9._%+-]+@(gmail\.com|creativewebsolution\.in)$/.test(
-            value,
-          )
-        ) {
-          error = "Please enter a valid email address.";
-        }
-        break;
+    case "designation":
+      if (!value.trim()) {
+        error = "Designation is required.";
+      }
+      break;
 
-      case "contact":
-        if (!value.trim()) {
-          error = "Contact number is required.";
-        } else if (!/^\d{10}$/.test(value)) {
-          error = "Contact number must be exactly 10 digits.";
-        }
-        break;
+    case "department":
+      if (!value.trim()) {
+        error = "Department is required.";
+      }
+      break;
+case "pfNumber":
+  if (!value.trim()) {
+    error = "PF Number is required.";
+  } else if (!/^[A-Za-z0-9]{22}$/.test(value.trim())) {
+    error = "PF Number must be 22 character alphanumeric.";
+  }
+  break;
 
-      case "employeeId":
-        if (!value.trim()) {
-          error = "Employee ID is required.";
-        }
-        break;
+    case "uanNumber":
+      if (value.trim() && !/^\d{12}$/.test(value.trim())) {
+        error = "UAN Number must be exactly 12 digits.";
+      }
+      break;
 
-      case "salary":
-        if (!value) {
-          error = "Salary is required.";
-        } else if (Number(value) <= 0) {
-          error = "Salary must be greater than 0.";
-        }
-        break;
+    default:
+      break;
+  }
 
-      case "dob":
-        if (!value) {
-          error = "Date of birth is required.";
-        } else {
-          const minDate = new Date();
-          minDate.setFullYear(minDate.getFullYear() - 18);
-          if (new Date(value) > minDate) {
-            error = "Employee must be at least 18 years old.";
-          }
-        }
-        break;
+  setErrors((prev) => ({ ...prev, [name]: error }));
+  return error;
+};
 
-      case "designation":
-        if (!value.trim()) {
-          error = "Designation is required.";
-        }
-        break;
+const validateBankField = (name, value) => {
+  let error = "";
 
-      case "department":
-        if (!value.trim()) {
-          error = "Department is required.";
-        }
-        break;
+  switch (name) {
+    case "bankName":
+      if (!value.trim()) {
+        error = "Bank name is required.";
+      } else if (!/^[A-Za-z\s]+$/.test(value.trim())) {
+        error = "Bank name must contain only letters and spaces.";
+      }
+      break;
 
-      case "pfNumber":
-        // if (!value.trim()) error = "PF Number is required.";
-        // else
-        if (!/^[A-Za-z0-9]+$/.test(value))
-          error = "PF Number must be alphanumeric.";
-        break;
+    case "accountNumber":
+      if (!value.trim()) {
+        error = "Account number is required.";
+      } else if (!/^\d+$/.test(value.trim())) {
+        error = "Account number must contain only digits.";
+      }
+      break;
 
-      case "uanNumber":
-        // if (!value.trim()) error = "UAN Number is required.";
-        // else
-        if (!/^\d{12}$/.test(value))
-          error = "UAN Number must be exactly 12 digits.";
-        break;
+    case "ifsc":
+      if (!value.trim()) {
+        error = "IFSC code is required.";
+      } else if (
+        !/^[A-Z]{4}0[A-Z0-9]{6}$/.test(value.trim().toUpperCase())
+      ) {
+        error = "Please enter a valid IFSC code.";
+      }
+      break;
 
-      default:
-        break;
-    }
+    default:
+      break;
+  }
 
-    setErrors((prev) => ({ ...prev, [name]: error }));
+  setErrors((prev) => {
+    const next = { ...prev };
+    const key = `bankDetails.${name}`;
 
-    return error;
-  };
+    if (error) next[key] = error;
+    else delete next[key];
 
-  const validateBankField = (name, value) => {
-    let error = "";
+    return next;
+  });
 
-    switch (name) {
-      case "bankName":
-        if (!value) error = "Bank name is required.";
-        else if (!/^[A-Za-z\s]+$/.test(value))
-          error = "Bank name must contain only letters and spaces.";
-        break;
+  return error;
+};
 
-      case "accountNumber":
-        if (!value) error = "Account number is required.";
-        else if (!/^\d+$/.test(value))
-          error = "Account number must contain only digits.";
-        break;
+const validateAddressField = (addressKey, name, value) => {
+  let error = "";
 
-      case "ifsc":
-        if (!value) error = "IFSC code is required.";
-        break;
+  switch (name) {
+    case "street":
+      if (value.trim() && value.trim().length < 3) {
+        error = "Street looks too short.";
+      }
+      break;
 
-      default:
-        break;
-    }
+    case "city":
+      if (value.trim() && !/^[A-Za-z\s]+$/.test(value.trim())) {
+        error = "City must contain only letters and spaces.";
+      }
+      break;
 
-    setErrors((prev) => {
-      const next = { ...prev };
-      const key = `bankDetails.${name}`;
-      if (error) next[key] = error;
-      else delete next[key];
-      return next;
-    });
+    case "state":
+      if (value.trim() && !/^[A-Za-z\s]+$/.test(value.trim())) {
+        error = "State must contain only letters and spaces.";
+      }
+      break;
 
-    return error;
-  };
+    case "zip":
+      if (value.trim() && !/^\d{6}$/.test(value.trim())) {
+        error = "PIN must be exactly 6 digits.";
+      }
+      break;
 
-  const validateAddressField = (addressKey, name, value) => {
-    let error = "";
+    default:
+      break;
+  }
 
-    switch (name) {
-      case "street":
-        if (value && value.trim().length < 3) error = "Street looks too short.";
-        break;
+  const key = `${addressKey}.${name}`;
 
-      case "city":
-        if (value && !/^[A-Za-z\s]+$/.test(value))
-          error = "City must contain only letters and spaces.";
-        break;
+  setErrors((prev) => {
+    const next = { ...prev };
 
-      case "state":
-        if (value && !/^[A-Za-z\s]+$/.test(value))
-          error = "State must contain only letters and spaces.";
-        break;
+    if (error) next[key] = error;
+    else delete next[key];
 
-      case "zip":
-        if (value && !/^\d{6}$/.test(value))
-          error = "PIN must be exactly 6 digits.";
-        break;
+    return next;
+  });
 
-      default:
-        break;
-    }
-
-    const key = `${addressKey}.${name}`;
-    setErrors((prev) => {
-      const next = { ...prev };
-      if (error) next[key] = error;
-      else delete next[key];
-      return next;
-    });
-
-    return error;
-  };
+  return error;
+};
 
   const handleChange = (e) => {
     const { name: fieldName, value } = e.target;
@@ -411,8 +455,24 @@ const AddEmployee = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleNext = () => setStep((prev) => prev + 1);
-  const handleBack = () => setStep((prev) => prev - 1);
+const handleNext = () => {
+  setStep((prev) => prev + 1);
+
+  setTimeout(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = 0;
+    }
+  }, 50);
+};
+const handleBack = () => {
+  setStep((prev) => prev - 1);
+
+  setTimeout(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = 0;
+    }
+  }, 50);
+};
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -486,7 +546,7 @@ const AddEmployee = () => {
       });
 
       const res = await axios.post(
-        "https://cws-ems-server.vercel.app/admin/add-employee",
+        "http://localhost:8000/admin/add-employee",
         payload,
         {
           headers: { "Content-Type": "multipart/form-data" },
@@ -621,18 +681,34 @@ const AddEmployee = () => {
       >
         Add Employee
       </button>
-      {showModal && (
-        <div
-          className="modal fade show"
-          tabIndex="-1"
-          ref={modalRef}
-          style={{ display: "block", backgroundColor: "rgba(0,0,0,0.5)" }}
-        >
-          <div
-          className="modal-dialog modal-lg modal-dialog-centered"  //Added jayshree
-            style={{ maxWidth: "700px" }}
-          >
-            <div className="modal-content">
+{showModal && (
+  <div
+    className="modal fade show"
+    tabIndex="-1"
+    ref={modalRef}
+    style={{
+      display: "block",
+      backgroundColor: "rgba(0,0,0,0.5)",
+      zIndex: 999,
+      padding: "10px",
+    }}
+  >
+    <div
+className="modal-dialog modal-lg"
+    style={{
+  maxWidth: "700px",
+  width: "100%",
+  margin: "90px auto 20px auto",
+}}
+    >
+  <div
+
+  className="modal-content"
+  style={{
+    maxHeight: "90vh",
+    overflowY: "auto",
+  }}
+>
               <div className="custom-modal-header">
                 <span className="custom-modal-title">Add Employee</span>
                <button
@@ -661,7 +737,7 @@ const AddEmployee = () => {
                 </p>
               )}
 
-              <div className="custom-modal-body">
+              <div className="custom-modal-body" ref={scrollRef}>
                 <form className="formModel" onSubmit={handleSubmit}>
                   {/* Step 1: Personal Details */}
                   {step === 1 && (
@@ -801,22 +877,33 @@ const AddEmployee = () => {
                             </small>
                           )}
                         </div>
-                        <div className="col-md-6 mb-0">
-                          <label>Department:</label>
-                          <input
-                            type="text"
-                            className="form-control"
-                            name="department"
-                            value={formData.department}
-                            onChange={handleChange}
-                            required
-                          />
-                          {errors.department && (
-                            <small className="text-danger">
-                              {errors.department}
-                            </small>
-                          )}
-                        </div>
+                     <div className="col-md-6 mb-0">
+  <label>Department:</label>
+
+  <select
+    className="form-select"
+    name="department"
+    value={formData.department}
+    onChange={handleChange}
+    required
+  >
+    <option value="">Select Department</option>
+    <option value="HR">HR</option>
+    <option value="IT">IT</option>
+    <option value="Finance">Finance</option>
+    <option value="Sales">QA</option>
+    <option value="Marketing">Marketing</option>
+    <option value="Operations">Operations</option>
+    <option value="Admin">Admin</option>
+    <option value="Support">Support</option>
+  </select>
+
+  {errors.department && (
+    <small className="text-danger">
+      {errors.department}
+    </small>
+  )}
+</div>
 
                         <div className="col-md-6 mb-0">
                           <label>Role:</label>
@@ -910,47 +997,87 @@ const AddEmployee = () => {
                             )}
                           </div> */}
 
-                          <div className="mb-3 salary-field">
-                            <label className="form-label salary-label">
-                              Salary:
-                            </label>
-                            <div className="input-group salary-input-group">
-                              <span
-                                className="form-control"
-                                style={{ height: "50px", width: "100%" }}
-                              >
-                                ₹
-                              </span>
-                              <input
-                                type="number"
-                                //className="form-control salary-input"
-                                className="form-control"
-                                name="salary"
-                                value={formData.salary}
-                                onChange={handleChange}
-                                min="20"
-                                step="20"
-                                placeholder="Enter salary amount"
-                                required
-                                style={{ height: "50px", width: "100%" }}
-                              />
-                              <select
-                                className="form-select"
-                                name="salaryType"
-                                value={formData.salaryType || "monthly"}
-                                onChange={handleChange}
-                                style={{ height: "50px", width: "100%" }}
-                              >
-                                <option value="monthly">Per Month</option>
-                                <option value="yearly">Per Year</option>
-                              </select>
-                            </div>
-                            {errors.salary && (
-                              <small className="text-danger salary-error">
-                                {errors.salary}
-                              </small>
-                            )}
-                          </div>
+  <div className="col-md-6 mb-0">
+                          <label>Salary:</label>
+                           </div>
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: "10px",
+        width: "100%",
+      }}
+    >
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          border: "1px solid #ced4da",
+          borderRadius: "6px",
+          overflow: "hidden",
+          flex: 1,
+          height: "39px",
+          minWidth: 0,
+        }}
+      >
+        <span
+          style={{
+            width: "50px",
+            height: "100%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            background: "#f8f9fa",
+            fontWeight: "600",
+            borderRight: "1px solid #ced4da",
+            flexShrink: 0,
+          }}
+        >
+          ₹
+        </span>
+
+        <input
+          type="number"
+          className="form-control"
+          name="salary"
+          value={formData.salary}
+          onChange={handleChange}
+          min="20"
+          step="20"
+          placeholder="Enter salary amount"
+          required
+          style={{
+            border: "none",
+            boxShadow: "none",
+            height: "100%",
+            flex: 1,
+            minWidth: 0,
+          }}
+        />
+      </div>
+
+      <select
+        className="form-select"
+        name="salaryType"
+        value={formData.salaryType || "monthly"}
+        onChange={handleChange}
+        style={{
+          width: "122px",
+          minWidth: "120px",
+          height: "39px",
+          flexShrink: 0,
+        }}
+      >
+        <option value="monthly">Per Month</option>
+        <option value="yearly">Per Year</option>
+      </select>
+    </div>
+
+    {errors.salary && (
+      <small className="text-danger">{errors.salary}</small>
+    )}
+  
+
                         </div>
                         <div className="col-md-6 mb-0">
                           <label>Date of Joining:</label>
@@ -1043,18 +1170,34 @@ const AddEmployee = () => {
                         </div>
                       </div>
 
-                      <h5 className="mb-3">Permanent Address</h5>
+                    <h5 className="mb-3">Permanent Address</h5>
+
+<div className="mb-2">
+  <div className="form-check">
+    <input
+      className="form-check-input"
+      type="checkbox"
+      id="sameAddress"
+      checked={sameAddress}
+      onChange={handleSameAddress}
+    />
+    <label className="form-check-label" htmlFor="sameAddress">
+      Same as Current Address
+    </label>
+  </div>
+</div>
                       <div className="mb-4" style={{ marginbo: "-30px" }}>
                         <div className="row mb-3">
                           <div className="col-md-6 mb-0">
                             <label>Street:</label>
-                            <input
-                              type="text"
-                              className="form-control"
-                              name="permanentAddress.street"
-                              value={formData.permanentAddress.street}
-                              onChange={handleChange}
-                            />
+                         <input
+  type="text"
+  className="form-control"
+  name="permanentAddress.street"
+  value={formData.permanentAddress.street}
+  onChange={handleChange}
+  disabled={sameAddress}
+/>
                             {errors["permanentAddress.street"] && (
                               <small className="text-danger">
                                 {errors["permanentAddress.street"]}
@@ -1069,6 +1212,7 @@ const AddEmployee = () => {
                               name="permanentAddress.city"
                               value={formData.permanentAddress.city}
                               onChange={handleChange}
+                               disabled={sameAddress}
                             />
                             {errors["permanentAddress.city"] && (
                               <small className="text-danger">
@@ -1084,6 +1228,7 @@ const AddEmployee = () => {
                               name="permanentAddress.state"
                               value={formData.permanentAddress.state}
                               onChange={handleChange}
+                               disabled={sameAddress}
                             />
 
                             {errors["permanentAddress.state"] && (
@@ -1107,6 +1252,7 @@ const AddEmployee = () => {
                                   handleChange(e);
                                 }
                               }}
+                               disabled={sameAddress}
                             />
                             {errors["permanentAddress.zip"] && (
                               <small className="text-danger">
@@ -1202,13 +1348,20 @@ const AddEmployee = () => {
                         {/* pf and uan number */}
                         <div className="col-md-6 mb-0">
                           <label>PF Number:</label>
-                          <input
-                            type="text"
-                            className="form-control"
-                            name="pfNumber"
-                            value={formData.pfNumber}
-                            onChange={handleChange}
-                          />
+                        <input
+                          type="text"
+                          className="form-control"
+                          name="pfNumber"
+                          value={formData.pfNumber}
+                          maxLength="22"
+                          onChange={(e) => {
+                            const val = e.target.value;
+
+                            if (/^[A-Za-z0-9]{0,22}$/.test(val)) {
+                              handleChange(e);
+                            }
+                          }}
+                        />
                           {errors.pfNumber && (
                             <small className="text-danger">
                               {errors.pfNumber}

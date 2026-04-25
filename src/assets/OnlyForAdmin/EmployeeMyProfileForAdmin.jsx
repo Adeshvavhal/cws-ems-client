@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import axios from "axios";
 
 function EmployeeProfileForAdmin({ employee: stateEmployee }) {
@@ -20,8 +20,10 @@ function EmployeeProfileForAdmin({ employee: stateEmployee }) {
   const [error, setError] = useState(null);
   const [errors, setErrors] = useState({});
   const { role, username, id } = useParams();
+  const [sameAsCurrent, setSameAsCurrent] = useState(false);
 
   const navigate = useNavigate();
+  const location = useLocation();
 
   // Fetch employee data if not passed via props
   useEffect(() => {
@@ -30,7 +32,7 @@ function EmployeeProfileForAdmin({ employee: stateEmployee }) {
         try {
           const token = localStorage.getItem("accessToken");
           const res = await axios.get(
-            `https://cws-ems-server.vercel.app/getEmployee/${empId}`,
+            `http://localhost:8000/getEmployee/${empId}`,
             {
               headers: { Authorization: `Bearer ${token}` },
             },
@@ -147,9 +149,13 @@ function EmployeeProfileForAdmin({ employee: stateEmployee }) {
           error = "Account number should not start with zero.";
         break;
 
-      case "ifsc":
-        if (!value) error = "IFSC code is required.";
-        break;
+    case "ifsc":
+  if (!value || value.trim() === "") {
+    error = "IFSC code is required.";
+  } else if (!/^[A-Z]{4}0[A-Z0-9]{6}$/.test(value.toUpperCase())) {
+    error = "Enter valid IFSC code (Example: SBIN0001234).";
+  }
+  break;
 
       default:
         break;
@@ -283,17 +289,38 @@ function EmployeeProfileForAdmin({ employee: stateEmployee }) {
       // ✅ Allow only letters and spaces (no numbers or symbols)
       if (!/^[A-Za-z\s]*$/.test(value)) return;
     }
+          if (key === "ifsc") {
+        const upperValue = value.toUpperCase();
+
+        if (!/^[A-Z0-9]*$/.test(upperValue)) return;
+        if (upperValue.length > 11) return;
+
+        value = upperValue;
+      }
 
     if (files && files[0]) {
       // File input
       setFormData((prev) => ({ ...prev, [name]: files[0] }));
-    } else if (name.startsWith("currentAddress.")) {
-      const key = name.split(".")[1];
-      setFormData((prev) => ({
-        ...prev,
-        currentAddress: { ...prev.currentAddress, [key]: value },
-      }));
-      validateAddressField("currentAddress", key, value);
+ } else if (name.startsWith("currentAddress.")) {
+  const key = name.split(".")[1];
+
+  setFormData((prev) => {
+    const updatedCurrent = {
+      ...prev.currentAddress,
+      [key]: value,
+    };
+
+    return {
+      ...prev,
+      currentAddress: updatedCurrent,
+      permanentAddress: sameAsCurrent
+        ? { ...updatedCurrent }
+        : prev.permanentAddress,
+    };
+  });
+
+  validateAddressField("currentAddress", key, value);
+
     } else if (name.startsWith("permanentAddress.")) {
       const key = name.split(".")[1];
       setFormData((prev) => ({
@@ -378,7 +405,7 @@ function EmployeeProfileForAdmin({ employee: stateEmployee }) {
       });
 
       await axios.put(
-        `https://cws-ems-server.vercel.app/employees/${employee._id || empId}`,
+        `http://localhost:8000/employees/${employee._id || empId}`,
         data,
         {
           headers: {
@@ -392,7 +419,7 @@ function EmployeeProfileForAdmin({ employee: stateEmployee }) {
       setIsEditing(false);
 
       const updated = await axios.get(
-        `https://cws-ems-server.vercel.app/getEmployee/${employee._id || empId}`,
+        `http://localhost:8000/getEmployee/${employee._id || empId}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         },
@@ -417,8 +444,8 @@ function EmployeeProfileForAdmin({ employee: stateEmployee }) {
   if (!employee) return <p>No employee data available.</p>;
   const formatLabel = (label) => {
     const specialCases = {
-      dob: "Date Of Birth",
-      doj: "Date Of Joining",
+      dob: "Date of Birth",
+      doj: "Date of Joining",
       empId: "Employee ID",
       aadharCardPdf: "Aadhar Card",
       panCardPdf: "PAN Card",
@@ -482,7 +509,7 @@ function EmployeeProfileForAdmin({ employee: stateEmployee }) {
 
     const url = fileName.startsWith("http")
       ? fileName
-      : `https://cws-ems-server.vercel.app/uploads/${fileName}`;
+      : `http://localhost:8000/uploads/${fileName}`;
 
     const fileType = getFileType(fileName);
 
@@ -521,7 +548,7 @@ function EmployeeProfileForAdmin({ employee: stateEmployee }) {
     try {
       const token = localStorage.getItem("accessToken");
       const res = await axios.delete(
-        `https://cws-ems-server.vercel.app/deleteEmployee/${id}`,
+        `http://localhost:8000/deleteEmployee/${id}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         },
@@ -573,7 +600,7 @@ function EmployeeProfileForAdmin({ employee: stateEmployee }) {
                   src={
                     employee?.image?.startsWith("http")
                       ? employee.image
-                      : `https://cws-ems-server.vercel.app/uploads/${employee.image}`
+                      : `http://localhost:8000/uploads/${employee.image}`
                   }
                   alt="Profile Preview"
                   style={{
@@ -875,7 +902,7 @@ function EmployeeProfileForAdmin({ employee: stateEmployee }) {
 
               <div className="col-md-6">
                 <label className="form-label text-primary">
-                  Date Of Birth:
+                  Date of Birth:
                 </label>
                 {isEditing ? (
                   <>
@@ -908,7 +935,7 @@ function EmployeeProfileForAdmin({ employee: stateEmployee }) {
 
               <div className="col-md-6">
                 <label className="form-label text-primary">
-                  Date Of Joining:
+                  Date of Joining:
                 </label>
                 {isEditing ? (
                   <>
@@ -970,7 +997,32 @@ function EmployeeProfileForAdmin({ employee: stateEmployee }) {
               ))}
             </div>
 
-            <h6 className="fw-bold text-primary mt-4">Permanent Address</h6>
+        <h6 className="fw-bold text-primary mt-4">Permanent Address</h6>
+
+{isEditing && (
+  <div className="form-check mb-3">
+    <input
+      className="form-check-input"
+      type="checkbox"
+      id="sameAddress"
+      checked={sameAsCurrent}
+      onChange={(e) => {
+        const checked = e.target.checked;
+        setSameAsCurrent(checked);
+
+        if (checked) {
+          setFormData((prev) => ({
+            ...prev,
+            permanentAddress: { ...prev.currentAddress },
+          }));
+        }
+      }}
+    />
+    <label className="form-label text-primary" htmlFor="sameAddress">
+      Same as Current Address
+    </label>
+  </div>
+)}
             <div className="row g-3">
               {["street", "city", "state", "zip"].map((field) => (
                 <div key={field} className="col-md-6">
@@ -986,6 +1038,7 @@ function EmployeeProfileForAdmin({ employee: stateEmployee }) {
                         name={`permanentAddress.${field}`}
                         value={formData.permanentAddress?.[field] || ""}
                         onChange={handleChange}
+                          disabled={sameAsCurrent}
                         className="form-control bg-light border-0"
                       />
 
@@ -1108,7 +1161,7 @@ function EmployeeProfileForAdmin({ employee: stateEmployee }) {
                       href={
                         employee[field]?.startsWith("http")
                           ? employee[field]
-                          : `https://cws-ems-server.vercel.app/uploads/${employee[field]}`
+                          : `http://localhost:8000/uploads/${employee[field]}`
                       }
                       target="_blank"
                       rel="noopener noreferrer"
@@ -1139,7 +1192,7 @@ function EmployeeProfileForAdmin({ employee: stateEmployee }) {
 
                 ) : employee.bankDetails?.passbookPdf ? (
                   <a
-                    href={`https://cws-ems-server.vercel.app/uploads/${employee.bankDetails.passbookPdf}`}
+                    href={`http://localhost:8000/uploads/${employee.bankDetails.passbookPdf}`}
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -1336,9 +1389,19 @@ function EmployeeProfileForAdmin({ employee: stateEmployee }) {
                       className="form-control bg-light border-0"
                     />
                   ) : (
-                    <div className="form-control bg-light border-0">
-                      {employee[field] ?? "-"}
-                    </div>
+                 <div className="form-control bg-light border-0">
+  {field === "salary"
+    ? `${employee.salary ?? "-"} ${
+        employee.salaryType
+          ? employee.salaryType === "monthly"
+            ? "Per Month"
+            : employee.salaryType === "yearly"
+            ? "Per Year"
+            : employee.salaryType
+          : ""
+      }`
+    : employee[field] ?? "-"}
+</div>
                   )}
                 </div>
               ))}
@@ -1361,7 +1424,15 @@ function EmployeeProfileForAdmin({ employee: stateEmployee }) {
         <button
           className="btn btn-sm custom-outline-btn"
           style={{ minWidth: 90 }}
-          onClick={() => window.history.go(-1)}
+ onClick={() => {
+  if (location.state?.fromOldEmployees) {
+    navigate(`/dashboard/${role}/${username}/${id}/allemployeedetails`, {
+      state: { openOldEmployees: true },
+    });
+  } else {
+    navigate(`/dashboard/${role}/${username}/${id}/allemployeedetails`);
+  }
+}}
         >
           Back
         </button>
